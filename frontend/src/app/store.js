@@ -1,15 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import rolechoiceReducer from  '../features/rolechoice/rolechoiceSlice';
-import catshopReducer from  '../features/catshop/catshopSlice';
-import accomodationReducer from  '../features/accomodation/accomodationSlice';
-import catfriendsReducer from  '../features/catfriends/catfriendsSlice';
+import menuReducer from  '../features/layout/menuSlice';
+import clientsReducer from  '../features/pages/clientsSlice';
+import employeesReducer from  '../features/pages/employeesSlice';
 
 export default configureStore({
   reducer: {
-    rolechoice: rolechoiceReducer,
-    catshop: catshopReducer,
-    accomodation: accomodationReducer,
-    catfriends: catfriendsReducer
+    menu: menuReducer,
+    employees: employeesReducer,
+    clients: clientsReducer
   },
   devTools: true
 });
