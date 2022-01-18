@@ -5,7 +5,7 @@ let Session = require("supertokens-node/recipe/session");
 
 router.get('/', Session.verifySession(), async function(req, res, next) {
   try {
-    console.log(req.body.name, "vypisujem klientov")
+    // console.log(res.body.firstname, "vypisujem klientov")
     res.json(await clients.getClients());
   } catch (err) {
     console.error(`Error while getting clients`, err.message);
