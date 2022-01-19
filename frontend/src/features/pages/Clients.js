@@ -24,11 +24,11 @@ export function Clients() {
 
   const columns = [{
     title: 'Firstame',
-    dataIndex: 'Firstname',
-    render: text => <a href="#">{text}</a>,
+    dataIndex: 'firstname',
+    // render: text => <a href="#">{text}</a>,
   }, {
     title: 'Lastname',
-    dataIndex: 'Lastname',
+    dataIndex: 'lastname',
   }, {
     title: 'Address',
     dataIndex: 'address',
@@ -44,10 +44,10 @@ export function Clients() {
   };
 
   useEffect(() => {
-          //dispatch(fetchClients());
+          dispatch(fetchClients());
           // dispatch(setSelectedKeys(['13']));
           // dispatch(setOpenKeys(['sub0']));
-        },[]);
+        },[dispatch]);
 
   return (
     <>

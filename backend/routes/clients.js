@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cats = require('../services/clients');
+const clients = require('../services/clients');
 let Session = require("supertokens-node/recipe/session");
 
 router.get('/', Session.verifySession(), async function(req, res, next) {
