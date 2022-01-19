@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Breadcrumb, Layout, Calendar } from 'antd';
-import { useDispatch } from 'react-redux';
+//import { useDispatch } from 'react-redux';
 // import { Redirect, NavLink } from "react-router-dom";
 // import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 import { Navigation } from '../layout/Navigation';
@@ -12,23 +12,23 @@ import {
   const { Content, Header, Footer } = Layout;
 
 export function Dashboard() {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     // const active = useSelector(selectActive);
     // const catfriends = useSelector(selectCatfriends);
     // let {jwtPayload} = useSessionContext();
     // let role = jwtPayload.role;
 
-    useEffect(() => {
-        dispatch(setSelectedKeys(['1']));
-        dispatch(setOpenKeys(['sub1']));
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(setSelectedKeys(['1']));
+    //     dispatch(setOpenKeys(['sub1']));
+    // }, []);
 
             return (
               <>
 
               <Layout className="layout" hasSider>
                 
-                <Navigation />  
+                <Navigation selectedkeys={['1']} openkeys={['sub1']} />  
                 
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
             <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 

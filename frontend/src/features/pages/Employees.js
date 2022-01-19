@@ -28,15 +28,15 @@ export function Employees() {
 
 useEffect(() => {
   //dispatch(fetchClients());
-  dispatch(setSelectedKeys(['14']));
-  dispatch(setOpenKeys(['sub0']));
-},[dispatch]);
+  // dispatch(setSelectedKeys(['14']));
+  // dispatch(setOpenKeys(['sub0']));
+},[]);
 
   return (
     <>
     <Layout className="layout" hasSider>
                 
-                <Navigation />  
+                <Navigation selectedkeys={['14']} openkeys={['sub0']}  />  
                 
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
             <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 

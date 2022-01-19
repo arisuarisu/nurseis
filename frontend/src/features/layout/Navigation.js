@@ -7,6 +7,7 @@ import {
     selectSelected,
     selectOpen
 } from './menuSlice';
+//import './nav.css';
 import {
     // AppstoreOutlined,
     // BarChartOutlined,
@@ -22,7 +23,7 @@ const { Title } = Typography;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-export function Navigation() {
+export function Navigation(props) {
   // const [selectedkeys, setSelectedkeys] = useState(useSelector(selectSelected));
   // const [openkeys, setOpenkeys] = useState(useSelector(selectOpen));
   //const dispatch = useDispatch();
@@ -32,8 +33,8 @@ export function Navigation() {
   //   const openkeys = useSelector(selectOpen)//['sub0'])
   //       },[selectedkeys, openkeys]);
 
-    let selectedkeys = useSelector(selectSelected)//['13']
-    let openkeys = useSelector(selectOpen)//['sub0']
+    // const selectedkeys = useSelector(selectSelected)//['13']
+    // const openkeys = useSelector(selectOpen)//['sub0']
     //console.log("vypisujem selected", selectedkeys)
     //console.log("vypisujem open", openkeys)
 
@@ -52,8 +53,8 @@ export function Navigation() {
         <Menu
         // onClick={this.handleClick}
         style={{ width: 256 }}
-        defaultSelectedKeys={selectedkeys}
-        defaultOpenKeys={openkeys}
+        defaultSelectedKeys={props.selectedkeys}
+        defaultOpenKeys={props.openkeys}
         mode="inline"
       >
         <SubMenu

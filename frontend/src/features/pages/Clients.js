@@ -44,17 +44,17 @@ export function Clients() {
   };
 
   useEffect(() => {
-          dispatch(fetchClients());
-          dispatch(setSelectedKeys(['13']));
-          dispatch(setOpenKeys(['sub0']));
-        },[dispatch]);
+          //dispatch(fetchClients());
+          // dispatch(setSelectedKeys(['13']));
+          // dispatch(setOpenKeys(['sub0']));
+        },[]);
 
   return (
     <>
     {/* <Datable data={clientslist} /> */}
     <Layout className="layout" hasSider>
                 
-                <Navigation />  
+                <Navigation selectedkeys={['13']} openkeys={['sub0']} />  
                 
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
             <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
