@@ -52,7 +52,7 @@ export function Navigation(props) {
         
         <Menu
         // onClick={this.handleClick}
-        style={{ width: 256 }}
+        //style={{ width: 256 }}
         defaultSelectedKeys={props.selectedkeys}
         defaultOpenKeys={props.openkeys}
         mode="inline"
