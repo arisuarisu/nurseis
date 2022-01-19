@@ -42,7 +42,7 @@ useEffect(() => {
             <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
                 <Content style={{ padding: '0 50px' }}>
 
-                <Breadcrumb>
+                <Breadcrumb style={{ padding: '20px 0' }}>
     <Breadcrumb.Item>Home</Breadcrumb.Item>
     <Breadcrumb.Item>
       <a href="/employees">Employees</a>
