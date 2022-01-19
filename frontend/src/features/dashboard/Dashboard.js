@@ -35,9 +35,9 @@ export function Dashboard() {
                 <Content style={{ padding: '0 50px' }}>
 
                 <Breadcrumb style={{ padding: '20px 0' }}>
-    <Breadcrumb.Item>Home</Breadcrumb.Item>
+    <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
     <Breadcrumb.Item>
-      <a href="/dashboard">Dashboard</a>
+      Dashboard
     </Breadcrumb.Item>
     
   </Breadcrumb>

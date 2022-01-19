@@ -23,12 +23,12 @@ export function Clients() {
   const clientslist = useSelector(selectClients);
 
   const columns = [{
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'Firstame',
+    dataIndex: 'Firstname',
     render: text => <a href="#">{text}</a>,
   }, {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'Lastname',
+    dataIndex: 'Lastname',
   }, {
     title: 'Address',
     dataIndex: 'address',
@@ -61,9 +61,9 @@ export function Clients() {
                 <Content style={{ padding: '0 50px' }}>
 
                 <Breadcrumb style={{ padding: '20px 0' }}>
-    <Breadcrumb.Item>Home</Breadcrumb.Item>
+    <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
     <Breadcrumb.Item>
-      <a href="/clients">Clients</a>
+      Clients
     </Breadcrumb.Item>
     </Breadcrumb>
 
