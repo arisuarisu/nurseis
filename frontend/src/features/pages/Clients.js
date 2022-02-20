@@ -1,7 +1,7 @@
 //import React, { useEffect } from 'react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-//import { Datatable } from '../components/Datatable';
+import { EdiTable } from '../components/EdiTable';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
@@ -12,16 +12,28 @@ import {
   setSelectedKeys,
   setOpenKeys
 } from '../layout/menuSlice';
-// import { Card, Col, Row,} from 'antd';
-import { Layout, Table, Breadcrumb } from 'antd';
+ import { Card, Row, Typography} from 'antd';
+import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
-// const { Title } = Typography;
+ const { Title } = Typography;
 // const { Meta } = Card;
+const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
+const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
+{key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
+{key:'2', firstname:'Zuzana', lastname:'Mikusova', address:'Tovarniky', team: 'MOJZIS'},
+{key:'3', firstname:'Zdena', lastname:'Kovacova', address:'Topolcany', team: 'KOVACOVA'},
+{key:'4', firstname:'Rastislav', lastname:'Nepela', address:'Nemcice', team: 'KOVACOVA'},
+{key:'5', firstname:'Bozena', lastname:'Mojzisova', address:'Praznovce', team: 'HORVATOVA'},
+{key:'6', firstname:'Ondrej', lastname:'Horvat', address:'Nemcice', team: 'CERVENA'},
+{key:'70', firstname:'Iveta', lastname:'Kovacova', address:'Topolcany', team: 'GAJDOS'},
+]
 
 export function Clients() {
   const dispatch = useDispatch();
-  const clientslist = useSelector(selectClients);
-
+  const clientslistredux = useSelector(selectClients);
+  const clientslist = clientslistredux.map(item => ({ ...item }))
+  console.log(clientslist, "vypisujem clientslist")
+  const clientslist2 = firstrow.concat(clientslist);
   const columns = [{
     title: 'Firstame',
     dataIndex: 'firstname',
@@ -32,6 +44,12 @@ export function Clients() {
   }, {
     title: 'Address',
     dataIndex: 'address',
+    // render: () => (<Button />)
+  }
+  , {
+    title: 'Team',
+    dataIndex: 'team',
+    // render: () => (<Button />)
   }];
 
   const rowSelection = {
@@ -54,7 +72,7 @@ export function Clients() {
     {/* <Datable data={clientslist} /> */}
     <Layout className="layout" hasSider>
                 
-                <Navigation selectedkeys={['13']} openkeys={['sub0']} />  
+                <Navigation selectedkeys={['2']} openkeys={['sub1']} />  
                 
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
             <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
@@ -66,9 +84,20 @@ export function Clients() {
       Clients
     </Breadcrumb.Item>
     </Breadcrumb>
-
-    <Table rowSelection={rowSelection} columns={columns} dataSource={clientslist} />
-
+<Row>
+    {/* <Card style={{height: '100%'}} bordered={true} >
+                  <Title level={5}>asdasd</Title>
+                  <p>asdas</p>
+                  <p><b>PRICE:</b> asdasd</p>
+                  <p><b>PIECES:</b> asdasd</p>
+                  
+              </Card> */}
+</Row>
+<Row>
+    {/* <Table rowSelection={rowSelection} columns={columns} dataSource={clientslist2} /> */}
+    {/* <Table rowSelection={rowSelection} columns={columns} dataSource={datadata} /> */}
+    <EdiTable columns={columns} data={clientslist2}/>
+</Row>
     </Content>                 
                  <Footer style={{ textAlign: 'center' }}>NurseIS ©2022</Footer>
                  </Layout>

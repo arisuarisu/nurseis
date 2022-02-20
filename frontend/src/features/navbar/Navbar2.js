@@ -1,6 +1,7 @@
 import React, {useState} from "react";
-import { signOut } from "supertokens-auth-react/recipe/emailpassword";
-import { Row, Col, Menu,  Layout, Typography } from 'antd';
+//import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { Row, Col, Menu,  Layout, Typography, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 // import { NavLink } from  "react-router-dom";
 // import { useSelector } from 'react-redux';
 // import {
@@ -12,10 +13,10 @@ const { Title } = Typography;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-async function onLogout () {
-  await signOut();
-  window.location.href = "/";
-}
+// async function onLogout () {
+//   await signOut();
+//   window.location.href = "/";
+// }
 
 // const url='https://res.cloudinary.com/dazg4q7xb/image/upload/v1629038022/';
 // const png='.png';
@@ -37,14 +38,19 @@ export function Navbar2() {
       <Row justify="end">
         <Col>
       <Menu onClick={e => setCurrent(e.key)} selectedKeys={[current]} mode="horizontal" theme="light">
-        <SubMenu title="blabla">
+        <SubMenu title="Firstname Lastname">
+        <Avatar
+      style={{
+        backgroundColor: '#87d068',
+      }}
+      icon={<UserOutlined />}
+    />
           
-          
-            <MenuItemGroup>
+            {/* <MenuItemGroup>
             
 
             <Menu.Item key="logout" onClick={onLogout}>Logout</Menu.Item>
-          </MenuItemGroup>
+          </MenuItemGroup> */}
            
         </SubMenu>
       </Menu>
