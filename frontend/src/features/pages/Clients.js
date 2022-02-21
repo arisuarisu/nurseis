@@ -12,7 +12,7 @@ import {
   setSelectedKeys,
   setOpenKeys
 } from '../layout/menuSlice';
- import { Card, Row, Typography} from 'antd';
+ import { Card, Row, Col, Typography} from 'antd';
 import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
  const { Title } = Typography;
@@ -30,10 +30,12 @@ const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna'
 
 export function Clients() {
   const dispatch = useDispatch();
+  const [disabledadd, setDisabledadd] = useState(false);
   const clientslistredux = useSelector(selectClients);
-  const clientslist = clientslistredux.map(item => ({ ...item }))
-  console.log(clientslist, "vypisujem clientslist")
+  let clientslist = clientslistredux.map(item => ({ ...item }))
+  //console.log(clientslist, "vypisujem clientslist")
   const clientslist2 = firstrow.concat(clientslist);
+  console.log(clientslist2, "vypisujem clientslist2")
   const columns = [{
     title: 'Firstame',
     dataIndex: 'firstname',
@@ -60,6 +62,19 @@ export function Clients() {
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
     }),
   };
+
+  const titlebutton = () => {
+    return(
+      <Row justify="space-between"><Col>Clients</Col><Col><Button type="primary" onClick={addnew} disabled={disabledadd}>Add patient</Button></Col></Row>
+    )
+  }// disabled={disabledadd}
+
+  const addnew = () => {
+    //clientslist=clientslist2.map(item => ({ ...item }))
+    //clientslist.unshift(firstrow)
+    setDisabledadd(true);
+    //const clientslist2 = firstrow.concat(clientslist);
+  }
 
   useEffect(() => {
           dispatch(fetchClients());
@@ -96,7 +111,14 @@ export function Clients() {
 <Row>
     {/* <Table rowSelection={rowSelection} columns={columns} dataSource={clientslist2} /> */}
     {/* <Table rowSelection={rowSelection} columns={columns} dataSource={datadata} /> */}
-    <EdiTable columns={columns} data={clientslist2}/>
+    {/* <div style={{ marginBottom: 16 }}>
+          <Button type="primary" onClick={addnew} disabled={disabledadd}> 
+            Add patient
+          </Button>
+    </div> */}
+    {/* {disabledadd ?  */}
+     {/* <EdiTable columns={columns} data={clientslist2} title={titlebutton} /> : */}
+    <EdiTable columns={columns} data={clientslist} title={titlebutton} />
 </Row>
     </Content>                 
                  <Footer style={{ textAlign: 'center' }}>NurseIS ©2022</Footer>

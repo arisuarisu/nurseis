@@ -30,18 +30,23 @@ export function EdiTable(props){
     const columns = [{
         title: 'Firstname',
         dataIndex: 'firstname',
-        width: '25%',
+        //width: '25%',
         render: (text, record) => renderColumns(text, record, 'firstname'),
       }, {
         title: 'Lastname',
         dataIndex: 'lastname',
-        width: '15%',
+        //width: '15%',
         render: (text, record) => renderColumns(text, record, 'lastname'),
       }, {
         title: 'Address',
         dataIndex: 'address',
-        width: '40%',
+        //width: '20%',
         render: (text, record) => renderColumns(text, record, 'address'),
+      }, {
+        title: 'Diagnosis',
+        dataIndex: 'diagnosis',
+        //width: '20%',
+        render: (text, record) => renderColumns(text, record, 'diagnosis'),
       }, {
         title: 'Operation',
         dataIndex: 'operation',
@@ -173,8 +178,15 @@ let cache=data.map(item => ({ ...item })); //?
       setData(newData);
     }
   }
+
+  // const titlebutton = () => {
+  //   return(
+  //     <Button type="primary" >Add patient</Button>
+  //   )
+  // }
   //render() {
-    return <Table bordered rowSelection={rowSelection} dataSource={data} columns={columns} />;
+    return <Table bordered rowSelection={rowSelection} dataSource={data} columns={columns} 
+                  title={props.title} footer={() => 'Icons for printing'} style={{width: '100%'}} />;
   //}
 }
 
