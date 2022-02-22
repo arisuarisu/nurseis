@@ -47,10 +47,7 @@ export function Dashboard() {
     // let {jwtPayload} = useSessionContext();
     // let role = jwtPayload.role;
 
-    // useEffect(() => {
-    //     dispatch(setSelectedKeys(['1']));
-    //     dispatch(setOpenKeys(['sub1']));
-    // }, []);
+    
     // function getListData(value) {
     //   let listData;
     //   switch (value.date()) {
@@ -114,7 +111,7 @@ export function Dashboard() {
   <Col>
   <Link to="/clients"><Card style={{width: 150, border: 'none', textAlign: 'center'}} cover={<Avatar size={150} shape="square" icon={<UserAddOutlined />} />} >
     {/* <Meta title="Add patient" /> */}
-    Add patient
+    Add client
   </Card></Link>
   </Col>
   <Col>
@@ -130,9 +127,9 @@ export function Dashboard() {
   </Card></Link>
   </Col>
   <Col>
-  <Link to="/diagnosis"><Card style={{width: 150, border: 'none', textAlign: 'center'}} cover={<Avatar size={150} shape="square" icon={<SolutionOutlined />} />} >
+  <Link to="/teams"><Card style={{width: 150, border: 'none', textAlign: 'center'}} cover={<Avatar size={150} shape="square" icon={<SolutionOutlined />} />} >
     {/* <Meta title="Add patient" /> */}
-    Add diagnosis
+    Team calendar
   </Card></Link>
   </Col>
   </Row>

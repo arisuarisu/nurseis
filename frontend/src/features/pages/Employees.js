@@ -1,57 +1,86 @@
-//import React, { useEffect } from 'react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { EdiTable } from '../components/EdiTable';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
-import { useDispatch } from 'react-redux';
-// import {
-//     selectShopitems,
-//     selectMyshopitems,
-//     fetchCatshopitems,
-//     buyItem
-//   } from './catshopSlice';
-//import './catshop.css'
 import {
-  setSelectedKeys,
-  setOpenKeys
-} from '../layout/menuSlice';
-import { Breadcrumb, Layout} from 'antd';
-//import { Typography } from 'antd';
+  fetchClients,
+  selectClients
+} from './clientsSlice';
+ import { Card, Row, Col, Typography, Popconfirm} from 'antd';
+import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
+ const { Title } = Typography;
+const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
+// const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
+// {key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
+// {key:'2', firstname:'Zuzana', lastname:'Mikusova', address:'Tovarniky', team: 'MOJZIS'},
+// {key:'3', firstname:'Zdena', lastname:'Kovacova', address:'Topolcany', team: 'KOVACOVA'},
+// {key:'4', firstname:'Rastislav', lastname:'Nepela', address:'Nemcice', team: 'KOVACOVA'},
+// {key:'5', firstname:'Bozena', lastname:'Mojzisova', address:'Praznovce', team: 'HORVATOVA'},
+// {key:'6', firstname:'Ondrej', lastname:'Horvat', address:'Nemcice', team: 'CERVENA'},
+// {key:'70', firstname:'Iveta', lastname:'Kovacova', address:'Topolcany', team: 'GAJDOS'},
+// ]
 
 export function Employees() {
-//   const shopitemlist = useSelector(selectShopitems);
-//   const myshopitemlist = useSelector(selectMyshopitems);
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const [disabledadd, setDisabledadd] = useState(false);
+  const clientslistredux = useSelector(selectClients);
+  let clientslist = clientslistredux.map(item => ({ ...item }))
+  //console.log(clientslist, "vypisujem clientslist")
+  const clientslist2 = firstrow.concat(clientslist);
+  //console.log(clientslist2, "vypisujem clientslist2")
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    getCheckboxProps: record => ({
+      disabled: record.name === 'Disabled User', // Column configuration not to be checked
+    }),
+  };
 
-//   useEffect(() => {
-//           dispatch(fetchCatshopitems())},[dispatch]);
+  const titlebutton = () => {
+    return(
+      <Row justify="space-between">
+        <Col>Nurses</Col>
+        {/* <Col>
+          <Button type="primary" onClick={addnew} disabled={disabledadd}>Add patient</Button>
+        </Col> */}
+      </Row>
+    )
+  }
 
-useEffect(() => {
-  //dispatch(fetchClients());
-  // dispatch(setSelectedKeys(['14']));
-  // dispatch(setOpenKeys(['sub0']));
-},[]);
+  const addnew = () => {
+    setDisabledadd(true);
+  }
+
+  useEffect(() => {
+          dispatch(fetchClients());
+        },[dispatch]);
 
   return (
     <>
     <Layout className="layout" hasSider>
-                
-                <Navigation selectedkeys={['14']} openkeys={['sub0']}  />  
-                
-            <Layout className="site-layout" style={{ marginLeft: 200 }}>
-            <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
-                <Content style={{ padding: '0 50px' }}>
+      <Navigation selectedkeys={['6']} openkeys={['sub2']} />  
+      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+        <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
+        <Content style={{ padding: '0 50px' }}>
+          <Breadcrumb style={{ padding: '20px 0' }}>
+            <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
+            <Breadcrumb.Item>Nurses</Breadcrumb.Item>
+          </Breadcrumb>
 
-                <Breadcrumb style={{ padding: '20px 0' }}>
-    <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
-    <Breadcrumb.Item>
-      Employees
-    </Breadcrumb.Item>
-    </Breadcrumb>
+          {/* CONTENT */}
 
-    </Content>                 
-                 <Footer style={{ textAlign: 'center' }}>NurseIS ©2022</Footer>
-                 </Layout>
-                 </Layout>
-    </>);
+          <Row>
+            <EdiTable data={clientslist} title={titlebutton} type='nurses'/>
+          </Row>
+
+          {/* END OF CONTENT */}
+
+        </Content>                 
+        <Footer style={{ textAlign: 'center' }}>NurseIS ©2022</Footer>
+      </Layout>
+    </Layout>
+  </>);
 }

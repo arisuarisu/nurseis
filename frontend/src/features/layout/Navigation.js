@@ -77,13 +77,13 @@ export function Navigation(props) {
           title={
             <span>
               <ReconciliationOutlined />
-              <span>Patients</span>
+              <span>Clients</span>
             </span>
           }
         >
           
             <Menu.Item key="2"><Link to="/clients">Overview</Link></Menu.Item>
-            <Menu.Item key="3"><Link to="/editclient">Edit patient</Link></Menu.Item>
+            <Menu.Item key="3"><Link to="/editpatient">Edit client</Link></Menu.Item>
             {/* <Menu.Item key="4"><Link to="/addclient">Find patient</Link></Menu.Item> */}
             <Menu.Item key="5"><Link to="/records">Records</Link></Menu.Item>
 

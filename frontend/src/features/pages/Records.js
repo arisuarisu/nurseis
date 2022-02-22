@@ -22,7 +22,7 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 // {key:'70', firstname:'Iveta', lastname:'Kovacova', address:'Topolcany', team: 'GAJDOS'},
 // ]
 
-export function Clients() {
+export function Records() {
   const dispatch = useDispatch();
   const [disabledadd, setDisabledadd] = useState(false);
   const clientslistredux = useSelector(selectClients);
@@ -44,7 +44,7 @@ export function Clients() {
       <Row justify="space-between">
         <Col>Clients</Col>
         <Col>
-          <Button type="primary" onClick={addnew} disabled={disabledadd}>Add client</Button>
+          <Button type="primary" onClick={addnew} disabled={disabledadd}>Add patient</Button>
         </Col>
       </Row>
     )
@@ -61,20 +61,20 @@ export function Clients() {
   return (
     <>
     <Layout className="layout" hasSider>
-      <Navigation selectedkeys={['2']} openkeys={['sub1']} />  
+      <Navigation selectedkeys={['4']} openkeys={['sub1']} />  
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
         <Content style={{ padding: '0 50px' }}>
           <Breadcrumb style={{ padding: '20px 0' }}>
             <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
-            <Breadcrumb.Item>Clients</Breadcrumb.Item>
+            <Breadcrumb.Item>Records</Breadcrumb.Item>
           </Breadcrumb>
 
           {/* CONTENT */}
 
-          <Row>
+          {/* <Row>
             <EdiTable data={clientslist} title={titlebutton}/>
-          </Row>
+          </Row> */}
 
           {/* END OF CONTENT */}
 

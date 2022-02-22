@@ -37,7 +37,13 @@ export function Navbar2() {
       <Col span={12}> 
       <Row justify="end">
         <Col>
-      <Menu onClick={e => setCurrent(e.key)} selectedKeys={[current]} mode="horizontal" theme="light">
+        <Avatar
+      style={{
+        backgroundColor: '#87d068',
+      }}
+      icon={<UserOutlined />}
+    />  Firstname Lastname
+      {/* <Menu onClick={e => setCurrent(e.key)} selectedKeys={[current]} mode="horizontal" theme="light">
         <SubMenu title="Firstname Lastname">
         <Avatar
       style={{
@@ -46,14 +52,14 @@ export function Navbar2() {
       icon={<UserOutlined />}
     />
           
-            {/* <MenuItemGroup>
+            <MenuItemGroup>
             
 
             <Menu.Item key="logout" onClick={onLogout}>Logout</Menu.Item>
-          </MenuItemGroup> */}
+          </MenuItemGroup>
            
         </SubMenu>
-      </Menu>
+      </Menu> */}
       </Col>
       </Row>  
       </Col>

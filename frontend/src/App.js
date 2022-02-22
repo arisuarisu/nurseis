@@ -18,8 +18,14 @@ import { Homescreen } from './features/homescreen/Homescreen';
 // import { Rolechoice } from './features/rolechoice/Rolechoice';
 // import { Getrole } from './features/rolechoice/Getrole';
 import { Dashboard } from './features/dashboard/Dashboard';
-import { Employees } from './features/pages/Employees';
 import { Clients } from './features/pages/Clients';
+import { Editpatient } from './features/pages/Editpatient';
+import { Records } from './features/pages/Records';
+import { Employees } from './features/pages/Employees';
+import { Editnurse } from './features/pages/Editnurse';
+import { Teams } from './features/pages/Teams';
+import { Attendance } from './features/pages/Attendance';
+import { Diagnosis } from './features/pages/Diagnosis';
 // import { Catshop } from './features/catshop/Catshop';
 // import { Accomodation } from './features/accomodation/Accomodation';
 // import { Catfriends } from './features/catfriends/Catfriends';
@@ -55,14 +61,14 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init({
             palette: {
-                primary: '#0ecc8a', //'#642ab5',
+                primary: '#87d068', //'#642ab5',
                 //error: '#f59842',
                 //background: '#141414',
-                //inputBackground: '#141414',
+                //inputBackground: '#FFFFFF',//'#141414',
                 // textTitle: 'white',
                 // textLabel: 'white',
                 // textInput: 'white',
-                textLink: '#0ecc8a' //'white'
+                textLink: '#87d068' //'white'
             },
             signInAndUpFeature: {
                 disableDefaultImplementation: true,
@@ -145,15 +151,51 @@ function App() {
                             </EmailPasswordAuth> 
                         </Route>
 
-                        <Route exact path="/employees">
+                        <Route exact path="/clients">
+                            <EmailPasswordAuth>
+                            <Clients />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/editpatient">
+                            <EmailPasswordAuth>
+                            <Editpatient />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/records">
+                            <EmailPasswordAuth>
+                            <Records />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/nurses">
                             <EmailPasswordAuth>
                             <Employees />
                             </EmailPasswordAuth> 
                         </Route>
 
-                        <Route exact path="/clients">
+                        <Route exact path="/editnurse">
                             <EmailPasswordAuth>
-                            <Clients />
+                            <Editnurse />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/teams">
+                            <EmailPasswordAuth>
+                            <Teams />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/attendance">
+                            <EmailPasswordAuth>
+                            <Attendance />
+                            </EmailPasswordAuth> 
+                        </Route>
+
+                        <Route exact path="/diagnosis">
+                            <EmailPasswordAuth>
+                            <Diagnosis />
                             </EmailPasswordAuth> 
                         </Route>
 
