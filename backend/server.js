@@ -45,24 +45,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../frontend/build')))
-// app.get('*', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, '/frontend/build', 'index.html'));
-// });
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname + '/frontend/client/build/index.html'))
-//   })
-
-// custom API that requires session verification
-// app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
-//     let session = req.session;
-//     res.send({
-//         sessionHandle: session.getHandle(),
-//         userId: session.getUserId(),
-//         jwtPayload: session.getJWTPayload(),
-//         sessionData: await session.getSessionData(),
-//     });
-// });
 
   app.use('/employees', employeesRouter);
   app.use('/clients', clientsRouter);

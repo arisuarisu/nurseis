@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Popconfirm, Button } from 'antd';
+import { Table, Input, Popconfirm, Button, Spin, Skeleton } from 'antd';
+import { LoadingTable } from './LoadingTable';
 
 export function EdiTable(props){
     const [data, setData] = useState(props.data);
@@ -226,8 +227,12 @@ let cache=data.map(item => ({ ...item })); //?
       return <Table bordered rowSelection={rowSelection} dataSource={data} columns={columns_nurses} style={{width: '100%'}}
                   title={props.title} footer={() => 'Icons for printing'}/>;
     }else{
-    return <Table bordered rowSelection={rowSelection} dataSource={data} columns={columns} style={{width: '100%'}}
+      if(props.loading===false){
+    return <Table bordered rowSelection={rowSelection} dataSource={data} columns={columns} style={{width: '100%'}} 
                   title={props.title} footer={() => 'Icons for printing'}/>;
+    }else{
+      return <LoadingTable columns={columns} />;
+    }
     }
 }
 

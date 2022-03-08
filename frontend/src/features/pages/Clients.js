@@ -5,9 +5,10 @@ import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
   fetchClients,
-  selectClients
+  selectClients,
+  selectLoading
 } from './clientsSlice';
- import { Card, Row, Col, Typography, Popconfirm} from 'antd';
+ import { Card, Row, Col, Typography, Popconfirm, Spin} from 'antd';
 import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
  const { Title } = Typography;
@@ -27,6 +28,7 @@ export function Clients() {
   const [disabledadd, setDisabledadd] = useState(false);
   const clientslistredux = useSelector(selectClients);
   let clientslist = clientslistredux.map(item => ({ ...item }))
+  const loading = useSelector(selectLoading);
   //console.log(clientslist, "vypisujem clientslist")
   const clientslist2 = firstrow.concat(clientslist);
   //console.log(clientslist2, "vypisujem clientslist2")
@@ -55,7 +57,8 @@ export function Clients() {
   }
 
   useEffect(() => {
-          dispatch(fetchClients());
+    //setTimeout(() => {dispatch(fetchClients())}, 1000);
+    dispatch(fetchClients())
         },[dispatch]);
 
   return (
@@ -73,7 +76,7 @@ export function Clients() {
           {/* CONTENT */}
 
           <Row>
-            <EdiTable data={clientslist} title={titlebutton}/>
+            <EdiTable data={clientslist} title={titlebutton} loading={loading} />
           </Row>
 
           {/* END OF CONTENT */}

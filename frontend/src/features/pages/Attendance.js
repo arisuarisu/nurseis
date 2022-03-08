@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { EdiTable } from '../components/EdiTable';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
-import {
-  fetchClients,
-  selectClients
-} from './clientsSlice';
+// import {
+//   writeArrival,
+//   writeDeparture
+// } from './attendanceSlice';
 import moment from 'moment';
  import { Card, Row, Col, Typography, Popconfirm} from 'antd';
 import { Layout, Table, Breadcrumb, Button, DatePicker } from 'antd';
@@ -27,10 +27,10 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 export function Attendance() {
   const dispatch = useDispatch();
   const [disabledadd, setDisabledadd] = useState(false);
-  const clientslistredux = useSelector(selectClients);
-  let clientslist = clientslistredux.map(item => ({ ...item }))
+  //const clientslistredux = useSelector(selectClients);
+  //let clientslist = clientslistredux.map(item => ({ ...item }))
   //console.log(clientslist, "vypisujem clientslist")
-  const clientslist2 = firstrow.concat(clientslist);
+  //const clientslist2 = firstrow.concat(clientslist);
   //console.log(clientslist2, "vypisujem clientslist2")
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -67,9 +67,9 @@ export function Attendance() {
     setDisabledadd(true);
   }
 
-  useEffect(() => {
-          dispatch(fetchClients());
-        },[dispatch]);
+  // useEffect(() => {
+  //         dispatch(fetchClients());
+  //       },[dispatch]);
 
   return (
     <>
@@ -87,6 +87,9 @@ export function Attendance() {
 
           <Row>
             <EdiTable data={attendancelist} title={titlebutton} type='attendance' />
+            Tu si spravte dochadzku
+            <Button type="primary">Prichod</Button>
+            <Button type="primary">Odchod</Button>
           </Row>
 
           {/* END OF CONTENT */}
