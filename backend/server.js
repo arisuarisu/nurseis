@@ -7,6 +7,8 @@ const employeesRouter = require('./routes/employees');
 const clientsRouter = require('./routes/clients');
 const diagnosisRouter = require('./routes/diagnosis');
 
+let { middleware, errorHandler } = require("supertokens-node/framework/express");
+
 const port = process.env.PORT || 5000; 
 
 const app = express();
@@ -40,11 +42,29 @@ app.use(cors({
     credentials: false,
 }));
 
-app.use(supertokens.middleware());
+app.use(middleware());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../frontend/build')))
+// app.get('*', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, '/frontend/build', 'index.html'));
+// });
+
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname + '/frontend/client/build/index.html'))
+//   })
+
+// custom API that requires session verification
+// app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
+//     let session = req.session;
+//     res.send({
+//         sessionHandle: session.getHandle(),
+//         userId: session.getUserId(),
+//         jwtPayload: session.getJWTPayload(),
+//         sessionData: await session.getSessionData(),
+//     });
+// });
 
   app.use('/employees', employeesRouter);
   app.use('/clients', clientsRouter);
@@ -55,7 +75,7 @@ app.use(express.static(path.join(__dirname, '../frontend/build')))
   })
 
   
-  app.use(supertokens.errorHandler());
+  app.use(errorHandler());
   
   app.listen(port, function(){
       console.log('Server started on port '+port);
