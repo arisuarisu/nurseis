@@ -59,7 +59,7 @@ export function Clients() {
   useEffect(() => {
     //setTimeout(() => {dispatch(fetchClients())}, 1000);
     dispatch(fetchClients())
-        },[dispatch]);
+        },[]);
 
   return (
     <>
