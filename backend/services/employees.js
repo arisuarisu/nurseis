@@ -10,7 +10,15 @@ async function getEmployees() {
     return data
   }
 
+  async function newEmployee(firstname, lastname) {
+      const data = await db.query(
+        'INSERT INTO employees(firstname, lastname, password) VALUES($1, $2, $3) RETURNING *', [firstname, lastname, 'asdasd']
+      );
+      return data
+    }
+
 
   module.exports = {
-    getEmployees
+    getEmployees,
+    newEmployee
   }

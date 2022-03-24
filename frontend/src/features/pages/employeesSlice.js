@@ -8,6 +8,16 @@ export const fetchEmployees = createAsyncThunk('employees/getemployees', async (
   return res;
   })
 
+  export const newEmployee = createAsyncThunk('employees/new', async (employee, {dispatch}) => {
+    const res = await axios.post("/employees/new", {
+      firstname: employee.firstname,
+      lastname: employee.lastname,
+      //img: employee.img
+    }).then(res => res.data)
+    dispatch(fetchEmployees())
+    return res;
+    })
+
 const employeesSlice = createSlice({
   name: 'employees',
   initialState: { employees: [] },

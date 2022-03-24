@@ -1,13 +1,17 @@
 import React, {useState} from "react";
 //import { signOut } from "supertokens-auth-react/recipe/emailpassword";
-import { Row, Col, Menu,  Layout, Typography, Avatar } from 'antd';
+import { Row, Col, Menu,  Layout, Typography, Avatar, Switch } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 // import { NavLink } from  "react-router-dom";
-// import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 // import {
 //   selectRole,
 //   selectMe
 // } from '../rolechoice/rolechoiceSlice';
+import {
+  changeRole,
+  selectRole
+} from '../pages/roleSlice';
 const { Header } = Layout;
 const { Title } = Typography;
 const SubMenu = Menu.SubMenu;
@@ -22,10 +26,24 @@ const MenuItemGroup = Menu.ItemGroup;
 // const png='.png';
 
 export function Navbar2() {
-
+  const dispatch = useDispatch();
    const [current, setCurrent] = useState('mail');
+   //const [checked, setChecked] = useState(true);
   // const role = useSelector(selectRole);
   // const me = useSelector(selectMe);
+
+  function onChange (checked){
+    console.log('switch checked is', checked)
+    if(checked===true){
+      console.log('switch checked is', checked)
+      dispatch(changeRole('admin'));
+      //setChecked(false)
+    }else{
+      console.log('switch checked is', checked)
+      dispatch(changeRole('nurse'));
+      //setChecked(true)
+    }
+  }
 
   // if(role==='cat' || role==='owner') {  
     return (
@@ -36,6 +54,7 @@ export function Navbar2() {
             </Col>
       <Col span={12}> 
       <Row justify="end">
+        {/* <Col><Switch defaultChecked checkedChildren="nurse" unCheckedChildren="admin" onChange={onChange} /></Col> */}
         <Col>
         <Avatar
       style={{

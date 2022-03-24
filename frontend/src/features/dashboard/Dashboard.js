@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from  "react-router-dom";
 import { Breadcrumb, Layout, Calendar, Typography, Tag, Card, Row, Col, List, Avatar } from 'antd';
 import { UserOutlined,
@@ -18,10 +19,14 @@ CalendarFilled } from '@ant-design/icons';
 // import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
+// import {
+//   setSelectedKeys,
+//   setOpenKeys
+//   } from '../layout/menuSlice';
 import {
-  setSelectedKeys,
-  setOpenKeys
-  } from '../layout/menuSlice';
+  fetchClients,
+  selectClients
+  } from '../pages/clientsSlice';
   const { Content, Header, Footer } = Layout;
 
   const { Meta } = Card;
@@ -41,13 +46,16 @@ export function Dashboard() {
   {id: 7, name: 'aliasdce', email: 'asdasd'}]
 
   const data3=[{id: 1, name: 'alice', email: 'asdasd'}]
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     // const active = useSelector(selectActive);
     // const catfriends = useSelector(selectCatfriends);
     // let {jwtPayload} = useSessionContext();
     // let role = jwtPayload.role;
 
-    
+    // useEffect(() => {
+    //   dispatch(fetchClients())
+    //       },[dispatch]);
+
     // function getListData(value) {
     //   let listData;
     //   switch (value.date()) {

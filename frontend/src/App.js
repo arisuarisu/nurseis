@@ -19,12 +19,14 @@ import { Homescreen } from './features/homescreen/Homescreen';
 // import { Getrole } from './features/rolechoice/Getrole';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { Clients } from './features/pages/Clients';
+import { ManagingTeams } from './features/pages/ManagingTeams';
 import { Editpatient } from './features/pages/Editpatient';
 import { Records } from './features/pages/Records';
 import { Employees } from './features/pages/Employees';
 import { Editnurse } from './features/pages/Editnurse';
 import { Teams } from './features/pages/Teams';
 import { Attendance } from './features/pages/Attendance';
+import { MyAttendance } from './features/pages/MyAttendance';
 import { Diagnosis } from './features/pages/Diagnosis';
 // import { Catshop } from './features/catshop/Catshop';
 // import { Accomodation } from './features/accomodation/Accomodation';
@@ -175,6 +177,11 @@ function App() {
                             <Editnurse />
                             </EmailPasswordAuth>}/>
 
+                        <Route exact path="/managingteams" element={
+                            <EmailPasswordAuth>
+                            <ManagingTeams />
+                            </EmailPasswordAuth>}/>
+                        
                         <Route exact path="/teams" element={
                             <EmailPasswordAuth>
                             <Teams />
@@ -183,6 +190,11 @@ function App() {
                         <Route exact path="/attendance" element={
                             <EmailPasswordAuth>
                             <Attendance />
+                            </EmailPasswordAuth>}/>
+
+                        <Route exact path="/myattendance" element={
+                            <EmailPasswordAuth>
+                            <MyAttendance />
                             </EmailPasswordAuth>}/>
 
                         <Route exact path="/diagnosis" element={

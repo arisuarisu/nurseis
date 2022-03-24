@@ -6,8 +6,21 @@ Session.addAxiosInterceptors(axios);
 
 export const fetchClients = createAsyncThunk('clients/getclients', async () => {
   const res = await axios.get("/clients").then(res => res.data)
+  console.log('fetchujem clients')
   return res;
   })
+
+  export const newClient = createAsyncThunk('clients/new', async (client, {dispatch}) => {
+    const res = await axios.post("/clients/new", {
+      firstname: client.firstname,
+      lastname: client.lastname,
+      address: client.address,
+      diagnosis: [...client.diagnosis],
+      //img: client.img
+    }).then(res => res.data)
+    dispatch(fetchClients())
+    return res;
+    })
 
 const clientsSlice = createSlice({
   name: 'clients',
@@ -20,6 +33,7 @@ const clientsSlice = createSlice({
     },
     [fetchClients.fulfilled]: (state, action) => {
       state.loading=false
+      //console.log('vypisujem action.payload v clientsslice extrareduceri', action.payload)
       state.clients=action.payload
     },
     [fetchClients.rejected]: (state, action) => {

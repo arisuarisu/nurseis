@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import { EdiTable } from '../components/EdiTable';
 // import { EdiTable2 } from '../components/EdiTable2';
-import { EditableClients } from '../components/EditableClients';
+import { EditableTeams } from '../components/EditableTeams';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
@@ -31,7 +31,7 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 //   },
 // };
 
-export function Clients() {
+export function ManagingTeams() {
   //const dispatch = useDispatch();
   // const [newclient, setNewclient] = useState(false);
   //const clientslistredux = useSelector(selectClients);
@@ -81,19 +81,19 @@ export function Clients() {
   return (
     <>
     <Layout className="layout" hasSider>
-      <Navigation selectedkeys={['2']} openkeys={['sub1']} />  
+      <Navigation selectedkeys={['13']} openkeys={['sub3']} />  
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Header className="site-layout-background" style={{ padding: 0 }} ><Navbar2 /></Header> 
         <Content style={{ padding: '0 50px' }}>
           <Breadcrumb style={{ padding: '20px 0' }}>
             <Breadcrumb.Item><a href="/dashboard">Home</a></Breadcrumb.Item>
-            <Breadcrumb.Item>Clients</Breadcrumb.Item>
+            <Breadcrumb.Item>Teams</Breadcrumb.Item>
           </Breadcrumb>
 
           {/* CONTENT */}
 
           <Row>
-            <EditableClients />
+            <EditableTeams />
             {/* <EdiTable2 data={clientslistredux} title={titlebutton} loading={loading} new={newclient} cancelnew={cancelnew} type='clients' rerender={rerendering}/> */}
           </Row>
 

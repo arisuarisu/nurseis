@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const employeesRouter = require('./routes/employees');
 const clientsRouter = require('./routes/clients');
 const diagnosisRouter = require('./routes/diagnosis');
+const attendanceRouter = require('./routes/attendance');
 
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 
@@ -69,6 +70,7 @@ app.use(express.static(path.join(__dirname, '../frontend/build')))
   app.use('/employees', employeesRouter);
   app.use('/clients', clientsRouter);
   app.use('/diagnosis', diagnosisRouter);
+  app.use('/attendance', attendanceRouter);
 
   app.use('*', (req, res) => {
     res.sendFile(path.join(__dirname + '../frontend/build/index.html'))
