@@ -67,7 +67,13 @@ export function NestedTeams() {
     const columns = [
       { title: 'Firstname', dataIndex: 'firstname', key: 'firstname', editable: true },
       { title: 'Lastname', dataIndex: 'lastname', key: 'lastname', editable: true },
-      { title: 'Date range', dataIndex: 'dateRange', key: 'dateRange', editable: true },
+      { title: 'Date range', dataIndex: 'dateRange', key: 'dateRange', editable: true, 
+      render: (_, record) => (
+        <span>
+          {data[record.key].mem_from+' - '+data[record.key].mem_to}
+        </span>
+      ),
+     },
       {
         title: 'Action',
         dataIndex: 'operation',

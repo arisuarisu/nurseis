@@ -185,7 +185,7 @@ export function EditableEmployees () {
       title: 'Photo',
       dataIndex: 'photo',
       width: '15%',
-      editable: true,
+      editable: false,
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
