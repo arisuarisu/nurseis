@@ -7,19 +7,20 @@ import {
   DownloadOutlined 
 } from '@ant-design/icons';
 import {
-    fetchTeamMembers,
-    selectTmembers,
+    fetchDiagnosis,
+    selectDiagnosis,
     selectLoading,
-    newTeam,
-    editTeam
-  } from '../pages/teamsSlice';
+    newDiagnosis,
+    editDiagnosis
+  } from '../pages/diagnosisSlice';
 
 import { CSVLink } from "react-csv";
 const { Option } = Select;
 
 const headers_teams = [
-    { label: "Teams", key: "teams" },
-    { label: "Members", key: "members" }
+    { label: "Name", key: "name" },
+    { label: "Description", key: "description" },
+    { label: "Treatment", key: "treatment" },
   ];
 
 const EditableCell = ({
@@ -101,10 +102,10 @@ const EditableCell = ({
   );}
 };
 
-export function EditableTeams () {
+export function EditableDiagnosis () {
     const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const datadata = useSelector(selectTmembers);
+  const datadata = useSelector(selectDiagnosis);
   console.log('vypisujem timy', datadata)
   const [data, setData] = useState([]);
   //console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
@@ -118,7 +119,7 @@ export function EditableTeams () {
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
 
-  const emptyteam = [{key: '0', team: '', members: [], editable: true}]
+  const emptyteam = [{key: '0', name: '', description: '', treatment: '', editable: true}]
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -131,9 +132,9 @@ export function EditableTeams () {
   const title = () => {
     return(
       <Row justify="space-between" align="middle">
-        <Col>Teams</Col>
+        <Col>Diagnoses</Col>
         <Col>
-          <Button type="primary" onClick={addnew} disabled={newclient}>Add team</Button>
+          <Button type="primary" onClick={addnew} disabled={newclient}>Add diagnosis</Button>
         </Col>
       </Row>
     )
@@ -148,7 +149,7 @@ export function EditableTeams () {
   }
 
   useEffect(() => {
-    dispatch(fetchTeamMembers())
+    dispatch(fetchDiagnosis())
         },[dispatch]);
 
         useEffect(() => {
@@ -170,8 +171,9 @@ export function EditableTeams () {
 
   const edit = (record) => {
     form.setFieldsValue({
-      team: 'Tím '+record.key,
-      //members: record.members,
+      name: record.name,
+      description: record.description,
+      treatment: record.treatment,
       ...record,
     });
     setEditingKey(record.key);
@@ -215,76 +217,23 @@ export function EditableTeams () {
 
   const columns_teams = [
     {
-      title: 'Team',
-      dataIndex: 'team',
+      title: 'Name',
+      dataIndex: 'name',
       width: '20%',
-      editable: false,
-      render: (_, record) => "Tím "+record.key,
+      editable: true,
     },
     {
-      title: 'Members',
-      dataIndex: 'members',
-      width: '70%',
+      title: 'Description',
+      dataIndex: 'description',
+      width: '35%',
       editable: true,
-      // render: (members, record) => {
-      //   const editable = isEditing(record);
-          
-      //   if(editable===true){
-      //     return(
-      //     <Form.Item
-      //     name="select-multiple"
-      //     rules={[
-      //       {
-      //         required: true,
-      //         message: 'Please select clients members',
-      //         type: 'array',
-      //       },
-      //     ]}
-      //   >
-      //     <Select
-      //   mode="multiple"
-      //   placeholder="Select members"
-      //   //defaultValue={record.diagnosis} //array expected
-      //   //defaultValue={members}
-      //   defaultValue={members}
-      //   style={{ width: '100%' }}
-      // >
-      //   {/* {record.diagnosis.map(diagnosis => { */}
-      //   {/* <Option value={diagnosis}>{diagnosis}</Option> */}
-      //   <Option value='blabla'>blabla</Option>
-      //   <Option value='blablac'>blablac</Option>
-      //   {/* })} */}
-      // </Select>
-      // </Form.Item>
-      //   )}else{
-      //   // (
-      //       // <>
-      //       //console.log(record)
-      //       {/* {members} */}
-      //       {['member1', 'member2'].map(tag => {
-      //         return(
-      //       <Tag>{tag}</Tag>)
-      //       })}
-      //       // </>
-      //   // );
-      //     }
-      // },
-      // render: (_, record) => (
-      //   <>
-      //     {data[0].members.map(tag => {
-      //       let color = tag.length > 5 ? 'geekblue' : 'green';
-      //       if (tag === 'loser') {
-      //         color = 'volcano';
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {tag.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // ),
     },
+    {
+        title: 'Treatment',
+        dataIndex: 'treatment',
+        width: '35%',
+        editable: true,
+      },
     {
       title: 'Operation',
       dataIndex: 'operation',

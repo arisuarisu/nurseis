@@ -22,6 +22,25 @@ export const fetchClients = createAsyncThunk('clients/getclients', async () => {
     return res;
     })
 
+    export const editClient = createAsyncThunk('clients/edit', async (client, {dispatch}) => {
+      const res = await axios.post("/clients/edit", {
+        id: client.id,
+        firstname: client.firstname,
+        lastname: client.lastname,
+        address: client.address,
+        diagnosis: [...client.diagnosis],
+        //img: client.img
+      }).then(res => res.data)
+      dispatch(fetchClients())
+      return res;
+      })
+
+      export const deleteClient = createAsyncThunk('clients/deleteclient', async (client, {dispatch}) => {
+        const res = await axios.post("/clients/delete", {id: client.id}).then(res => res.data)
+        //dispatch(fetchClients())
+        return res;
+        })
+
 const clientsSlice = createSlice({
   name: 'clients',
   initialState: { clients: [], loading: true },

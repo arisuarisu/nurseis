@@ -38,35 +38,18 @@ const columns = [
     render: renderContent,
   },
   {
-    title: 'Home phone',
-    dataIndex: 'tel',
-    render: renderContent,
-    // render: (value, row, index) => {
-    //   const obj = {
-    //     children: value,
-    //     props: {},
-    //   };
-    //   if (index === 2) {
-    //     obj.props.rowSpan = 2;
-    //   }
-    //   // These two are merged into above cell
-    //   if (index === 3) {
-    //     obj.props.rowSpan = 0;
-    //   }
-    //   if (index === 4) {
-    //     obj.props.colSpan = 0;
-    //   }
-    //   return obj;
-    // },
-  },
-  {
-    title: 'Phone',
-    dataIndex: 'phone',
-    render: renderContent,
-  },
-  {
     title: 'Address',
     dataIndex: 'address',
+    render: renderContent,
+  },
+  {
+    title: 'Photo',
+    dataIndex: 'photo',
+    render: renderContent,
+  },
+  {
+    title: 'Operation',
+    dataIndex: 'operation',
     render: renderContent,
   },
 ];
@@ -97,6 +80,6 @@ const data = [
     return (
     // <Skeleton active paragraph={{ rows: 10 }} />
     <Table bordered dataSource={data} columns={columns} style={{width: '100%'}} 
-                  title={() => 'Clients'} footer={() => 'Icons for printing'}/>
+                  title={props.title} footer={props.footer}/>
     );
 }

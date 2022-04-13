@@ -3,17 +3,21 @@ import { useSelector, useDispatch } from 'react-redux';
 // import { EdiTable } from '../components/EdiTable';
 // import { EdiTable2 } from '../components/EdiTable2';
 import { EditableTeams } from '../components/EditableTeams';
+// import { EditableTeammembers } from '../components/EditableTeammembers';
+// import { EditableTeamclients } from '../components/EditableTeamclients';
+import { NestedTeams } from '../components/NestedTeams';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
-import {
-  fetchClients,
-  selectClients,
-  selectLoading
-} from './clientsSlice';
+// import {
+//   fetchClients,
+//   selectClients,
+//   selectLoading
+// } from './clientsSlice';
  import { Card, Row, Col, Typography, Popconfirm, Spin} from 'antd';
-import { Layout, Table, Breadcrumb, Button } from 'antd';
+import { Layout, Table, Breadcrumb, Button, Tabs } from 'antd';
 const { Content, Header, Footer } = Layout;
  const { Title } = Typography;
+ const { TabPane } = Tabs;
 const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
 // const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
 // {key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
@@ -92,10 +96,25 @@ export function ManagingTeams() {
 
           {/* CONTENT */}
 
-          <Row>
+          {/* <Row>
             <EditableTeams />
-            {/* <EdiTable2 data={clientslistredux} title={titlebutton} loading={loading} new={newclient} cancelnew={cancelnew} type='clients' rerender={rerendering}/> */}
-          </Row>
+          </Row> */}
+
+          <div className="card-container">
+    <Tabs type="card">
+      <TabPane tab="Managing team members" key="1">
+      {/* <EditableTeams /> */}
+      <NestedTeams />
+      </TabPane>
+      <TabPane tab="Managing clients in teams" key="2">
+      <NestedTeams />
+      {/* <EditableTeammembers /> */}
+      </TabPane>
+      {/* <TabPane tab="Managing clients in teams" key="3">
+      <EditableTeamclients />
+      </TabPane> */}
+    </Tabs>
+  </div>,
 
           {/* END OF CONTENT */}
 

@@ -125,7 +125,7 @@ export function MyAttendance() {
             </Select>
             </>
             }
-          <EdiTable2 type='clients'/>
+          {/* <EdiTable2 type='clients'/> */}
           </Row>
 
           {/* END OF CONTENT */}

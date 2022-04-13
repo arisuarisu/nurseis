@@ -5,8 +5,10 @@ const cookieParser = require('cookie-parser');
 //const helmet = require('helmet');
 const employeesRouter = require('./routes/employees');
 const clientsRouter = require('./routes/clients');
+const teamsRouter = require('./routes/teams');
 const diagnosisRouter = require('./routes/diagnosis');
 const attendanceRouter = require('./routes/attendance');
+const photosRouter = require('./routes/photos');
 
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 
@@ -69,8 +71,10 @@ app.use(express.static(path.join(__dirname, '../frontend/build')))
 
   app.use('/employees', employeesRouter);
   app.use('/clients', clientsRouter);
+  app.use('/teams', teamsRouter);
   app.use('/diagnosis', diagnosisRouter);
   app.use('/attendance', attendanceRouter);
+  app.use('/photos', photosRouter);
 
   app.use('*', (req, res) => {
     res.sendFile(path.join(__dirname + '../frontend/build/index.html'))

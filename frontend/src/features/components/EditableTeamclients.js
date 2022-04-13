@@ -7,8 +7,8 @@ import {
   DownloadOutlined 
 } from '@ant-design/icons';
 import {
-    fetchTeamMembers,
-    selectTmembers,
+    fetchTeams,
+    selectTeams,
     selectLoading,
     newTeam,
     editTeam
@@ -101,10 +101,10 @@ const EditableCell = ({
   );}
 };
 
-export function EditableTeams () {
+export function EditableTeamclients () {
     const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const datadata = useSelector(selectTmembers);
+  const datadata = useSelector(selectTeams);
   console.log('vypisujem timy', datadata)
   const [data, setData] = useState([]);
   //console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
@@ -148,7 +148,7 @@ export function EditableTeams () {
   }
 
   useEffect(() => {
-    dispatch(fetchTeamMembers())
+    dispatch(fetchTeams())
         },[dispatch]);
 
         useEffect(() => {

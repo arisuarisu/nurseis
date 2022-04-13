@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { EdiTable } from '../components/EdiTable';
+//import { EdiTable } from '../components/EdiTable';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
-  fetchClients,
-  selectClients
-} from './clientsSlice';
+  fetchEmployees,
+  searchEmployees,
+  newEmployee,
+  selectEmployees,
+  selectSearchEmployees,
+  editEmployee,
+  deleteEmployee
+} from './employeesSlice';
  import { Card, Row, Col, Typography, Popconfirm} from 'antd';
-import { Layout, Table, Breadcrumb, Button } from 'antd';
+import { Layout, Table, Breadcrumb, Button, Tabs,  Form, Input } from 'antd';
+const { Search } = Input;
 const { Content, Header, Footer } = Layout;
  const { Title } = Typography;
+ const { TabPane } = Tabs;
 const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
 // const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
 // {key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
@@ -24,39 +31,22 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 
 export function Editnurse() {
   const dispatch = useDispatch();
-  const [disabledadd, setDisabledadd] = useState(false);
-  const clientslistredux = useSelector(selectClients);
-  let clientslist = clientslistredux.map(item => ({ ...item }))
-  //console.log(clientslist, "vypisujem clientslist")
-  const clientslist2 = firstrow.concat(clientslist);
-  //console.log(clientslist2, "vypisujem clientslist2")
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    }),
-  };
+  const [searchValue, setSearchValue] = useState('');
+  const searchlist = useSelector(selectSearchEmployees);
 
-  const titlebutton = () => {
-    return(
-      <Row justify="space-between">
-        <Col>Clients</Col>
-        <Col>
-          <Button type="primary" onClick={addnew} disabled={disabledadd}>Add patient</Button>
-        </Col>
-      </Row>
-    )
-  }
+  //const Demo = () => {
+    const onFinish = (values) => {
+      console.log('Success:', values);
+      dispatch(newEmployee({firstname: values.firstname, lastname: values.lastname}))
+    };
+  
+    const onFinishFailed = (errorInfo) => {
+      console.log('Failed:', errorInfo);
+    };
 
-  const addnew = () => {
-    setDisabledadd(true);
-  }
-
-  useEffect(() => {
-          dispatch(fetchClients());
-        },[dispatch]);
+    const search = ()=>{
+      dispatch(searchEmployees({lastname: searchValue}))
+    }
 
   return (
     <>
@@ -72,9 +62,85 @@ export function Editnurse() {
 
           {/* CONTENT */}
 
-          {/* <Row>
-            <EdiTable data={clientslist} title={titlebutton}/>
-          </Row> */}
+          <div className="card-container">
+    <Tabs type="card">
+      <TabPane tab="New nurse" key="1">
+        <Row>
+          <Col>
+        <Card style={{width: '100%'}}>
+        <Form
+      name="basic"
+      labelCol={{
+        span: 8,
+      }}
+      wrapperCol={{
+        span: 16,
+      }}
+      initialValues={{
+        remember: true,
+      }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
+      <Form.Item
+        label="Firstname"
+        name="firstname"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your firstname!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label="Lastname"
+        name="lastname"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your lastname!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        wrapperCol={{
+          offset: 8,
+          span: 16,
+        }}
+      >
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+        </Card>
+        </Col>
+        </Row>
+      </TabPane>
+      <TabPane tab="Edit nurse" key="2">
+      <Search placeholder="Find new friends here" value={searchValue} size="large" onChange={(e) => {setSearchValue(e.target.value)}} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto', paddingBottom: '15px'}} onSearch={search} enterButton />
+  {//showSearch || requestedlist && catfriendslist ?
+  searchValue!=='' ?
+    <>{searchlist.map((item) => (
+      <Col xs={24} sm={12} md={8} lg={6}>
+        <Card hoverable key={item.id} bordered={true} 
+                //   cover={
+                // <img alt={item.nickname} src={url + item.img + png} />}
+                >
+            <p>{item.firstname}</p>
+            <p>{item.lastname}</p>
+        </Card>
+    </Col> ))}</>:<></>}
+      </TabPane>
+    </Tabs>
+  </div>,
 
           {/* END OF CONTENT */}
 

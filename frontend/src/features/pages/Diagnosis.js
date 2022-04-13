@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { EdiTable } from '../components/EdiTable';
+// import { EdiTable } from '../components/EdiTable';
+import { EditableDiagnosis } from '../components/EditableDiagnosis';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
@@ -72,9 +73,9 @@ export function Diagnosis() {
 
           {/* CONTENT */}
 
-          {/* <Row>
-            <EdiTable data={clientslist} title={titlebutton}/>
-          </Row> */}
+          <Row>
+            <EditableDiagnosis />
+          </Row>
 
           {/* END OF CONTENT */}
 

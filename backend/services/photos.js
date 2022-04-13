@@ -2,7 +2,7 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-async function getClients() {
+async function getPhotos() {
   //console.log('pred klientmi')
     const data = await db.query(
       //"SELECT c.id AS key, c.firstname, c.lastname, c.address, d.id FROM clients c LEFT JOIN diagnosis_reports dr ON c.id=dr.id_clients LEFT JOIN diagnosis d ON dr.id_diagnosis=d.id GROUP BY c.id, d.id", []
@@ -26,7 +26,7 @@ async function getClients() {
     return data
   }
 
-  async function newClient(firstname, lastname, address, diagnosis) { //doriesit co sa bude vracat
+  async function newPhoto(firstname, lastname, address, diagnosis) { //doriesit co sa bude vracat
     //console.log(firstname, lastname, address, diagnosis, 'ukladam noveho klienta')
       const data = await db.query(
         'INSERT INTO clients(firstname, lastname, address) VALUES($1, $2, $3) RETURNING id', [firstname, lastname, address]
@@ -43,7 +43,7 @@ async function getClients() {
       return data2
     }
 
-    async function editClient(id, firstname, lastname, address, diagnosis) { //doriesit co sa bude vracat
+    async function editPhoto(id, firstname, lastname, address, diagnosis) { //doriesit co sa bude vracat
       //console.log(diagnosis, diagnosis.length)
         const data = await db.query(
           'UPDATE clients SET firstname=$1, lastname=$2, address=$3 WHERE id=$4', [firstname, lastname, address, id]
@@ -74,7 +74,7 @@ async function getClients() {
         return data2
       }
 
-      async function deleteClient(id) {
+      async function deletePhoto(id) {
         const data = await db.query(
           'DELETE FROM clients WHERE id=$1', [id]
         );
@@ -83,8 +83,8 @@ async function getClients() {
 
 
   module.exports = {
-    getClients,
-    newClient,
-    editClient,
-    deleteClient
+    getPhotos,
+    newPhoto,
+    editPhoto,
+    deletePhoto
   }

@@ -7,19 +7,19 @@ import {
   DownloadOutlined 
 } from '@ant-design/icons';
 import {
-    fetchTeamMembers,
-    selectTmembers,
-    selectLoading,
-    newTeam,
-    editTeam
-  } from '../pages/teamsSlice';
+    fetchEmployees,
+    newEmployee,
+    selectEmployees,
+    editEmployee,
+    deleteEmployee
+  } from '../pages/employeesSlice';
 
 import { CSVLink } from "react-csv";
 const { Option } = Select;
 
-const headers_teams = [
-    { label: "Teams", key: "teams" },
-    { label: "Members", key: "members" }
+const headers_nurses = [
+    { label: "Firstname", key: "firstname" },
+    { label: "Lastname", key: "lastname" }
   ];
 
 const EditableCell = ({
@@ -33,50 +33,6 @@ const EditableCell = ({
   ...restProps
 }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-  if(dataIndex==='members'){
-    console.log('vypisujem members editable cell record', record)
-    console.log('vypisujem members editable cell children', children)
-    return (
-      <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-           <Select
-        mode="multiple"
-        placeholder="Select members"
-        //defaultValue={record.diagnosis} //array expected
-        //defaultValue={members}
-        defaultValue={children[1]}
-        style={{ width: '100%' }}
-      >
-        {children[1].map(option => {
-          return(
-        <Option value={option}>{option}</Option>)
-         })} 
-      </Select>
-        </Form.Item>
-      ) : (
-        <>
-        {record.members.map(option => {
-          return(
-          <Tag>{option}</Tag>)
-           })} 
-           </>
-      )}
-    </td>
-    )
-  }
-  else{
   return (
     <td {...restProps}>
       {editing ? (
@@ -98,27 +54,27 @@ const EditableCell = ({
         children
       )}
     </td>
-  );}
+  );
 };
 
-export function EditableTeams () {
+export function EditableEmployees () {
     const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const datadata = useSelector(selectTmembers);
-  console.log('vypisujem timy', datadata)
+  const datadata = useSelector(selectEmployees);
+  console.log('vypisujem datadata', datadata)
   const [data, setData] = useState([]);
-  //console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
+  console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
   const [dataCSV, setDataCSV] = useState([])
   // const [rerender, setRerender] = useState(false)
-  //console.log(data, 'vypisujem data z editable2')
-  const loading = useSelector(selectLoading);
+  console.log(data, 'vypisujem data z editable2')
+  const loading = false //useSelector(selectLoading);
   const [newclient, setNewclient] = useState(false);
   // const datas=props.data
   // const [data, setData]=useState(data);
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
 
-  const emptyteam = [{key: '0', team: '', members: [], editable: true}]
+  const emptyclient = [{key: '0', firstname: '', lastname: '', address: '', editable: true}]
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -131,9 +87,9 @@ export function EditableTeams () {
   const title = () => {
     return(
       <Row justify="space-between" align="middle">
-        <Col>Teams</Col>
+        <Col>Nurses</Col>
         <Col>
-          <Button type="primary" onClick={addnew} disabled={newclient}>Add team</Button>
+          <Button type="primary" onClick={addnew} disabled={newclient}>Add nurse</Button>
         </Col>
       </Row>
     )
@@ -148,7 +104,7 @@ export function EditableTeams () {
   }
 
   useEffect(() => {
-    dispatch(fetchTeamMembers())
+    dispatch(fetchEmployees())
         },[dispatch]);
 
         useEffect(() => {
@@ -161,7 +117,7 @@ export function EditableTeams () {
                 console.log('new was clicked')
                 //if(editingKey==='')
                 if(newclient===true){
-                    setData([].concat(emptyteam, data))
+                    setData([].concat(emptyclient, data))
                     setEditingKey('0')
                 }
                     },[newclient]);
@@ -170,12 +126,12 @@ export function EditableTeams () {
 
   const edit = (record) => {
     form.setFieldsValue({
-      team: 'Tím '+record.key,
-      //members: record.members,
+      name: '',
+      age: '',
+      address: '',
       ...record,
     });
     setEditingKey(record.key);
-    console.log('vypisujem record', record)
   };
 
   const cancel = () => {
@@ -186,13 +142,12 @@ export function EditableTeams () {
     try {
       const row = await form.validateFields();
       console.log('vypisujem ROW: ', row)
-      console.log('vypisujem key v save', key, typeof(key))
-      // if(key==='0'){
-      //   dispatch(newTeam({members: row.members}))
-      // }
-      // else{
-      // dispatch(editTeam({id: key, members: row.members}))
-      // }
+      if(editingKey==='0'){
+        dispatch(newEmployee({firstname: row.firstname, lastname: row.lastname}))
+      }else{
+        dispatch(editEmployee({id: key, firstname: row.firstname, lastname: row.lastname}))
+      }
+      
       
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -213,82 +168,40 @@ export function EditableTeams () {
     }
   };
 
-  const columns_teams = [
+  const columns_nurses = [
     {
-      title: 'Team',
-      dataIndex: 'team',
-      width: '20%',
-      editable: false,
-      render: (_, record) => "Tím "+record.key,
+      title: 'Firstname',
+      dataIndex: 'firstname',
+      width: '35%',
+      editable: true,
     },
     {
-      title: 'Members',
-      dataIndex: 'members',
-      width: '70%',
+      title: 'Lastname',
+      dataIndex: 'lastname',
+      width: '35%',
       editable: true,
-      // render: (members, record) => {
-      //   const editable = isEditing(record);
-          
-      //   if(editable===true){
-      //     return(
-      //     <Form.Item
-      //     name="select-multiple"
-      //     rules={[
-      //       {
-      //         required: true,
-      //         message: 'Please select clients members',
-      //         type: 'array',
-      //       },
-      //     ]}
-      //   >
-      //     <Select
-      //   mode="multiple"
-      //   placeholder="Select members"
-      //   //defaultValue={record.diagnosis} //array expected
-      //   //defaultValue={members}
-      //   defaultValue={members}
-      //   style={{ width: '100%' }}
-      // >
-      //   {/* {record.diagnosis.map(diagnosis => { */}
-      //   {/* <Option value={diagnosis}>{diagnosis}</Option> */}
-      //   <Option value='blabla'>blabla</Option>
-      //   <Option value='blablac'>blablac</Option>
-      //   {/* })} */}
-      // </Select>
-      // </Form.Item>
-      //   )}else{
-      //   // (
-      //       // <>
-      //       //console.log(record)
-      //       {/* {members} */}
-      //       {['member1', 'member2'].map(tag => {
-      //         return(
-      //       <Tag>{tag}</Tag>)
-      //       })}
-      //       // </>
-      //   // );
-      //     }
-      // },
-      // render: (_, record) => (
-      //   <>
-      //     {data[0].members.map(tag => {
-      //       let color = tag.length > 5 ? 'geekblue' : 'green';
-      //       if (tag === 'loser') {
-      //         color = 'volcano';
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {tag.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // ),
+    },
+    {
+      title: 'Photo',
+      dataIndex: 'photo',
+      width: '15%',
+      editable: true,
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <Row justify="space-around">
+            <Avatar shape="square" size="large" icon={<UserOutlined />} />
+            </Row>
+        ) : (
+          <Row justify="space-around">
+            <Avatar shape="square" size="large" icon={<UserOutlined />} />
+            </Row>
+        )},
     },
     {
       title: 'Operation',
       dataIndex: 'operation',
-      width: '10%',
+      width: '15%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -314,7 +227,7 @@ export function EditableTeams () {
     },
   ];
 
-  const mergedColumns_teams = columns_teams.map((col) => {
+  const mergedColumns_nurses = columns_nurses.map((col) => {
     if (!col.editable) {
       return col;
     }
@@ -332,7 +245,7 @@ export function EditableTeams () {
   });
   
     if(loading===true){
-      return (<LoadingTable columns={columns_teams} title={title} />);
+      return (<LoadingTable columns={columns_nurses} title={title} />);
     }else{
   return (
     <Form form={form} component={false}>
@@ -344,14 +257,14 @@ export function EditableTeams () {
         }}
         bordered
         dataSource={data}
-        columns={mergedColumns_teams}
+        columns={mergedColumns_nurses}
         rowClassName="editable-row"
         pagination={{
           onChange: cancel,
         }}
         style={{width: '100%'}}
         title={title} 
-        footer={() => <CSVLink data={dataCSV} headers={headers_teams} filename={"records.csv"}><DownloadOutlined style={{ fontSize: '25px' }} /></CSVLink>}
+        footer={() => <CSVLink data={dataCSV} headers={headers_nurses} filename={"records.csv"}><DownloadOutlined style={{ fontSize: '25px' }} /></CSVLink>}
         rowSelection={rowSelection}
       />
     </Form>

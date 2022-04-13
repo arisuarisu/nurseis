@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { EdiTable2 } from '../components/EdiTable2';
+//import { EdiTable2 } from '../components/EdiTable2';
+import { EditableEmployees } from '../components/EditableEmployees';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
-import {
-  fetchEmployees,
-  newEmployee,
-  selectEmployees
-} from './employeesSlice';
+// import {
+//   fetchEmployees,
+//   newEmployee,
+//   selectEmployees
+// } from './employeesSlice';
  import { Card, Row, Col, Typography, Popconfirm} from 'antd';
 import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
@@ -24,21 +25,21 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 // ]
 
 export function Employees() {
-  const dispatch = useDispatch();
-  const [disabledadd, setDisabledadd] = useState(false);
-  const clientslistredux = useSelector(selectEmployees);
-  let clientslist = clientslistredux.map(item => ({ ...item }))
-  //console.log(clientslist, "vypisujem clientslist")
-  const clientslist2 = firstrow.concat(clientslist);
-  //console.log(clientslist2, "vypisujem clientslist2")
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    }),
-  };
+  // const dispatch = useDispatch();
+  // const [disabledadd, setDisabledadd] = useState(false);
+  // //const clientslistredux = useSelector(selectEmployees);
+  // let clientslist = clientslistredux.map(item => ({ ...item }))
+  // //console.log(clientslist, "vypisujem clientslist")
+  // const clientslist2 = firstrow.concat(clientslist);
+  // //console.log(clientslist2, "vypisujem clientslist2")
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys, selectedRows) => {
+  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  //   },
+  //   getCheckboxProps: record => ({
+  //     disabled: record.name === 'Disabled User', // Column configuration not to be checked
+  //   }),
+  // };
 
   const titlebutton = () => {
     return(
@@ -51,13 +52,13 @@ export function Employees() {
     )
   }
 
-  const addnew = () => {
-    setDisabledadd(true);
-  }
+  // const addnew = () => {
+  //   setDisabledadd(true);
+  // }
 
-  useEffect(() => {
-          dispatch(fetchEmployees());
-        },[dispatch]);
+  // useEffect(() => {
+  //         dispatch(fetchEmployees());
+  //       },[dispatch]);
 
   return (
     <>
@@ -75,7 +76,8 @@ export function Employees() {
 
           <Row>
             {/* <EdiTable data={clientslist} title={titlebutton} type='nurses'/> */}
-            <EdiTable2 data={clientslist} title={titlebutton} loading={false} type='nurses'/>
+            {/* <Editable2 data={clientslist} title={titlebutton} loading={false} type='nurses'/> */}
+          <EditableEmployees />
           </Row>
 
           {/* END OF CONTENT */}
