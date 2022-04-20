@@ -22,36 +22,60 @@ const config = require('../config');
 //     return data
 //   }
 
-  async function getTeamMembers(yearmonth) { //vybrat id timov s id a menami nursiek
-    console.log('vypisujem pred getteams')
+  async function getTeamMembers(year, month) { //vybrat id timov s id a menami nursiek
+    //const yearmonth='2022-04'
+    //console.log('vypisujem pred getteams')
     const data = await db.query(
       //"SELECT t.id, STRING_AGG (employees.firstname ',') members FROM teams t INNER JOIN member m ON t.id=m.id_team INNER JOIN employees e ON m.id_employee=e.id GROUP BY t.id", []
-      "SELECT t.id as key, STRING_AGG (e.firstname || ' ' ||e.lastname, ',') members, STRING_AGG (e.id::varchar(255), ',') member_ids FROM teams t LEFT JOIN member m ON t.id=m.id_team LEFT JOIN employees e ON m.id_employee=e.id WHERE e.role='nurse' GROUP BY t.id ORDER BY t.id", []
+      //"SELECT t.id as table, ROW_NUMBER () OVER (ORDER BY t.id) AS key, STRING_AGG (e.firstname || ' ' ||e.lastname, ',') members, STRING_AGG (e.id::varchar(255), ',') member_ids FROM teams t LEFT JOIN member m ON t.id=m.id_team LEFT JOIN employees e ON m.id_employee=e.id WHERE e.role='nurse' GROUP BY t.id ORDER BY t.id", []
+    "select id_team as key, STRING_AGG(name, ',') members, STRING_AGG(id_nurse::varchar(255), ',') member_ids from (SELECT distinct(concat(c.firstname, ' ', c.lastname)) as name, id as id_team, id_nurse from (select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join (select * from member WHERE ($1<= EXTRACT(YEAR FROM mem_from) AND $2<= EXTRACT(MONTH FROM mem_from)) OR ($3>= EXTRACT(YEAR FROM mem_to) AND $4>= EXTRACT(MONTH FROM mem_to))) as m on t.id=m.id_team left join employees e on m.id_employee=e.id GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to) as c order by id)as q GROUP BY q.id_team", [year, month, year, month]
     );
+    //select id_team as key, STRING_AGG(name, ',') members, STRING_AGG(id_nurse::varchar(255), ',') member_ids from (SELECT distinct(concat(c.firstname, ' ', c.lastname)) as name, id as id_team, id_nurse from (select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join member m on t.id=m.id_team left join employees e on m.id_employee=e.id WHERE (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')<= EXTRACT(YEAR FROM m.mem_from) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')<= EXTRACT(MONTH FROM m.mem_from)) OR (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')>= EXTRACT(YEAR FROM m.mem_to) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')>= EXTRACT(MONTH FROM m.mem_to)) GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to) as c order by id)as q GROUP BY q.id_team
+    //select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join (select * from member (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')<= EXTRACT(YEAR FROM m.mem_from) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')<= EXTRACT(MONTH FROM m.mem_from)) OR (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')>= EXTRACT(YEAR FROM m.mem_to) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')>= EXTRACT(MONTH FROM m.mem_to))) m on t.id=m.id_team left join employees e on m.id_employee=e.id GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to
     console.log('vypisujem data teams ', data)
     let arr=null
     let arr2=null
     for (let i = 0; i < data.length; i++) {
       if(data[i].members!==null){
-        arr = data[i].members.split(',');
+        if(data[i].members===' '){
+          data[i].members=[]
+          //continue //?
+        }else{
+          arr = data[i].members.split(',');
         data[i].members=[...arr]
-
+        }
+        //arr = data[i].members.split(',');
+        //data[i].members=[...arr]
+        // arr2 = data[i].member_ids.split(',');
+        // data[i].member_ids=[...arr2]
+      }else{
+        data[i].members=[]
+        //data[i].member_ids=[]
+      }
+      if(data[i].member_ids!==null){
         arr2 = data[i].member_ids.split(',');
         data[i].member_ids=[...arr2]
       }else{
-        data[i].members=[]
+        //data[i].members=[]
         data[i].member_ids=[]
       }
+
     }
     console.log('vypisujem data teams po prerobeni dat', data)
     return data
   }
 
-  async function getMembers(yearmonth) {
-    console.log('vypisujem yearmonth', yearmonth)
+  async function getMembers(year, month) {
+    console.log('vypisujem yearmonth v getmembers', year, month)
     const data = await db.query(
-      "SELECT t.id AS key, m.mem_from, m.mem_to, e.firstname, e.lastname from teams t LEFT JOIN member m ON t.id=m.id_team LEFT JOIN employees e ON m.id_employee=e.id WHERE role='nurse' ORDER BY t.id", []
+      "SELECT t.id AS table, ROW_NUMBER () OVER (ORDER BY t.id) AS key, m.mem_from, m.mem_to, e.firstname, e.lastname from teams t LEFT JOIN member m ON t.id=m.id_team LEFT JOIN employees e ON m.id_employee=e.id WHERE role='nurse' AND ($1<= EXTRACT(YEAR FROM mem_from) AND $2<= EXTRACT(MONTH FROM mem_from)) OR ($3>= EXTRACT(YEAR FROM mem_to) AND $4>= EXTRACT(MONTH FROM mem_to)) ORDER BY t.id", [year, month, year, month]
     );
+    for(let i=0; i<data.length;i++){
+      if(data[i].mem_to===null){
+        data[i].mem_to='';
+      }
+    }
+    console.log('vypisujem getmembers:', data)
     return data;
   }
 
@@ -87,6 +111,29 @@ const config = require('../config');
     );
     return data;
   }
+
+  async function getTeamCalendar(id_team, year, month) {
+    //console.log('vypisujem yearmonth', year, month)
+    const data = await db.query(
+      "select ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.firstname as n_first, e.lastname as n_last, c.firstname as c_first, c.lastname as c_last, EXTRACT(MONTH FROM p.pat_from) as month_from, EXTRACT(DAY FROM p.pat_from) as day_from, EXTRACT(MONTH FROM p.pat_to) as month_to, EXTRACT(DAY FROM p.pat_to) as day_to from teams t left join member m on t.id=m.id_team left join employees e on m.id_employee=e.id left join patient p on e.id=p.id_nurse left join clients c on p.id_client=c.id WHERE e.role='nurse' AND t.id=$1 AND (($2>= EXTRACT(YEAR FROM pat_from) AND $3>= EXTRACT(MONTH FROM pat_from)) AND (($4<= EXTRACT(YEAR FROM pat_to) AND $5<= EXTRACT(MONTH FROM pat_to)) OR pat_to=NULL))", [id_team, year, month, year, month]
+    );
+    //let newdata=[]
+    for(let i;i<data.length;i++){
+      if(data[i].month_from<month){
+        data[i].day_from=1
+        data[i].month_from=month
+      }
+      if(data[i].month_to>month){
+        //najst posledny den v danom mesiaci
+
+        data[i].day_to=new Date(year, month, 0).getDate(); //returns last day in month
+        data[i].month_to=month
+      }
+    }
+    return data;
+  }
+
+
 
   async function addTeam(name) { //doriesit co sa bude vracat
     //console.log(diagnosis, diagnosis.length)
@@ -188,13 +235,28 @@ const config = require('../config');
           return data2
         }
 
+        async function deleteTeam(id) { //doriesit co sa bude vracat
+          //console.log(diagnosis, diagnosis.length)
+            const data = await db.query(
+              'DELETE FROM teams WHERE id=$1', [id]
+            );
+            // console.log(data, data[0].id)
+            const data2 = await db.query(
+              'DELETE FROM member WHERE id_team=$1', [id]
+            );
+            //}
+            return data2
+          }
+
   module.exports = {
     //getTeams,
     getTeamMembers,
     getTeamPatients,
     getMembers,
     getPatients,
+    getTeamCalendar,
     addTeam,
     newTeam,
-    editTeam
+    editTeam,
+    deleteTeam
   }

@@ -129,7 +129,7 @@ return (
 );}
 };
 
-export function EditableTeams (props) {
+export function EditableTeam (props) {
     const dispatch = useDispatch();
     const todaydate = new Date();
     const today = [todaydate.getFullYear(), todaydate.getMonth()+1]
@@ -159,96 +159,6 @@ export function EditableTeams (props) {
     },
   };
 
-//   const headers_teams = [
-//     { label: "Teams", key: "teams" },
-//     { label: "Members", key: "members" }
-//   ];
-
-// const EditableCell = ({
-//   editing,
-//   dataIndex,
-//   title,
-//   inputType,
-//   record,
-//   index,
-//   children,
-//   ...restProps
-// }) => {
-//   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-//   //console.log('vypisujem dataindex', props.record)
-//   //if(dataIndex==='members'){
-//     if(1){
-//     console.log('vypisujem members editable cell record', record)
-//     console.log('vypisujem members editable cell children', children)
-//     return (
-//       <td {...restProps}>
-//         {/* {console.log('vypisujem record vovnutri', record)} */}
-//       {/* {editing ? (
-//         <Form.Item
-//           name={dataIndex}
-//           style={{
-//             margin: 0,
-//           }}
-//           rules={[
-//             {
-//               required: true,
-//               message: `Please Input ${title}!`,
-//             },
-//           ]}
-//         >
-//            <Select
-//         mode="multiple"
-//         placeholder="Select members"
-//         //defaultValue={record.diagnosis} //array expected
-//         //defaultValue={members}
-//         defaultValue={children[1]}
-//         style={{ width: '100%' }}
-//       >
-//         {children[1].map(option => {
-//           return(
-//         <Option value={option}>{option}</Option>)
-//          })} 
-//       </Select>
-//         </Form.Item>
-//         ) : ( */}
-      
-//         <>
-//         {record.members.map(option => {
-//         // data[record.key].map(option => {
-//           return(
-//           <Tag>{option}</Tag>)
-//            })} 
-//            </>
-      
-      
-//     </td>
-//     )
-//   }
-//   else{
-//   return (
-//     <td {...restProps}>
-//       {editing ? (
-//         <Form.Item
-//           name={dataIndex}
-//           style={{
-//             margin: 0,
-//           }}
-//           rules={[
-//             {
-//               required: true,
-//               message: `Please Input ${title}!`,
-//             },
-//           ]}
-//         >
-//           {inputNode}
-//         </Form.Item>
-//       ) : (
-//         children
-//       )}
-//     </td>
-//   );}
-// };
-
   useEffect(() => {
     if(selectedDate===''){
         setSelectedDate(today)
@@ -265,7 +175,7 @@ export function EditableTeams (props) {
   const title = () => {
     return(
       <Row justify="space-between" align="middle">
-        <Col>Teams</Col>
+        <Col>Team</Col>
         <Col>
         <DatePicker onChange={onDateSelect} picker="month" />
             <Button type="primary" onClick={() => dispatch(addTeam({name: 'asdasd'}))} >Add team</Button> 
@@ -354,103 +264,58 @@ export function EditableTeams (props) {
 
   const columns_teams = [
     {
-      title: 'Team',
-      dataIndex: 'team',
+      title: 'Nurse',
+      dataIndex: 'nurse',
       width: '20%',
       editable: false,
-      render: (_, record) => "Tím "+record.key,
+      //render: (_, record) => "Tím "+record.key,
     },
     {
-      title: 'Members',
-      dataIndex: 'members',
-      width: '70%',
+      title: 'Client',
+      dataIndex: 'client',
+      width: '20%',
+      editable: false,
+      //render: (_, record) => "Tím "+record.key,
+    },
+    {
+      title: 'From',
+      dataIndex: 'pat_from',
+      width: '25%',
       editable: true,
-      // render: (members, record) => {
-      //   const editable = isEditing(record);
-          
-      //   if(editable===true){
-      //     return(
-      //     <Form.Item
-      //     name="select-multiple"
-      //     rules={[
-      //       {
-      //         required: true,
-      //         message: 'Please select clients members',
-      //         type: 'array',
-      //       },
-      //     ]}
-      //   >
-      //     <Select
-      //   mode="multiple"
-      //   placeholder="Select members"
-      //   //defaultValue={record.diagnosis} //array expected
-      //   //defaultValue={members}
-      //   defaultValue={members}
-      //   style={{ width: '100%' }}
-      // >
-      //   {/* {record.diagnosis.map(diagnosis => { */}
-      //   {/* <Option value={diagnosis}>{diagnosis}</Option> */}
-      //   <Option value='blabla'>blabla</Option>
-      //   <Option value='blablac'>blablac</Option>
-      //   {/* })} */}
-      // </Select>
-      // </Form.Item>
-      //   )}else{
-      //   // (
-      //       // <>
-      //       //console.log(record)
-      //       {/* {members} */}
-      //       {['member1', 'member2'].map(tag => {
-      //         return(
-      //       <Tag>{tag}</Tag>)
-      //       })}
-      //       // </>
-      //   // );
-      //     }
-      // },
-      // render: (_, record) => (
-      //   <>
-      //     {data[record.key].members.map(tag => {
-      //       let color = tag.length > 5 ? 'geekblue' : 'green';
-      //       if (tag === 'loser') {
-      //         color = 'volcano';
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {tag.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // ),
+    },
+    {
+      title: 'To',
+      dataIndex: 'pat_to',
+      width: '25%',
+      editable: true,
     },
     {
       title: 'Action',
       dataIndex: 'operation',
       width: '10%',
       //render: record => {
-       //render: (_, record) => {
-      //   // const editable = isEditing(record);
-      //   // return editable ? (
-          // <span>
-          //   <Popconfirm title="Sure to delete?" onConfirm={() => deleteteam(record.key)}>
-          //     <a>Delete</a>
-          //   </Popconfirm>
-          //   <Typography.Link
-          //     onClick={() => props.manage(record.key)}
-          //     style={{
-          //       marginRight: 8,
-          //     }}
-          //   >
-          //     Manage
-          //   </Typography.Link>
-          // </span>}
-      //   // ) : (
-      //   //   <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-      //   //     Edit
-      //   //   </Typography.Link>
-      //   // );
-      // },
+       render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Popconfirm title="Sure to delete?" onConfirm={() => deleteteam(record.key)}>
+              <a>Delete</a>
+            </Popconfirm>
+            <Typography.Link
+              onClick={() => props.manage(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Manage
+            </Typography.Link>
+          </span>
+        ) : (
+          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+            Edit
+          </Typography.Link>
+        );
+      },
     },
   ];
 
@@ -467,8 +332,8 @@ export function EditableTeams (props) {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
-        deleteteam: deleteteam,
-        manage: props.manage
+        //deleteteam: deleteteam,
+        //manage: props.manage
       }),
     };
   });

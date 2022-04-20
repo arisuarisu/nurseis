@@ -85,8 +85,10 @@ CREATE TABLE member ( --treba id_member??
       ON DELETE CASCADE
 );
 
-INSERT INTO member(id_employee, id_team) VALUES (1, 1);
-INSERT INTO member(id_employee, id_team) VALUES (2, 1);
+insert into member(id_employee, id_team) values (3,1);
+insert into member(id_employee, id_team) values (4,1);
+insert into member(id_employee, id_team) values (5,1);
+insert into member(id_employee, id_team) values (6,1);
 
 CREATE SEQUENCE clients_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 
@@ -111,19 +113,25 @@ CREATE SEQUENCE patient_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVAL
 
 CREATE TABLE patient ( --rozdelit address?? rodne cislo???
     id bigint DEFAULT nextval('patient_id_seq'::regclass) NOT NULL PRIMARY KEY,
-    id_team bigint NOT NULL,
+    id_nurse bigint NOT NULL,
     id_client bigint NOT NULL,
     pat_from timestamp DEFAULT CURRENT_TIMESTAMP::date NOT NULL,
     pat_to timestamp,
-    CONSTRAINT fk_team_patient
-      FOREIGN KEY(id_team) 
-	  REFERENCES teams(id)
+    CONSTRAINT fk_nurse_patient
+      FOREIGN KEY(id_nurse) 
+	  REFERENCES employees(id)
       ON DELETE CASCADE,
     CONSTRAINT fk_client_patient
       FOREIGN KEY(id_client) 
 	  REFERENCES clients(id)
       ON DELETE CASCADE
 );
+
+insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (3, 1, '2022-03-03', '2022-04-25');
+insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (3, 1, '2022-03-03', '2022-04-02');
+insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (4, 2, '2022-04-03', '2022-05-25');
+insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (5, 3, '2022-03-03', '2022-03-25');
+insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (6, 4, '2022-04-03', '2022-05-25');
 
 CREATE SEQUENCE diagnosis_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 
@@ -135,7 +143,7 @@ CREATE TABLE diagnosis (
 );
 
 INSERT INTO diagnosis(name, description, treatment) VALUES ('ostheoporosis', 'bones hurt', 'taking calcium');
-INSERT INTO diagnosis(name, description, treatment) VALUES ('lepra', 'your flesh is falling apart', 'there is none you die');
+--INSERT INTO diagnosis(name, description, treatment) VALUES ('lepra', 'your flesh is falling apart', 'there is none you die');
 
 CREATE TABLE diagnosis_reports ( --priradenie diagnoz k ludom -- treba id?
     id_clients bigint NOT NULL,
@@ -158,7 +166,7 @@ CREATE TABLE diagnosis_reports ( --priradenie diagnoz k ludom -- treba id?
 );
 
 INSERT INTO diagnosis_reports(id_clients, id_employee, id_diagnosis) VALUES (1, 1, 1);
-INSERT INTO diagnosis_reports(id_clients, id_employee, id_diagnosis) VALUES (2, 2, 2);
+INSERT INTO diagnosis_reports(id_clients, id_employee, id_diagnosis) VALUES (2, 2, 1);
 
 CREATE SEQUENCE health_reports_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 
@@ -178,10 +186,10 @@ CREATE TABLE health_reports ( --zdravotne zapisy co sa s clovekom urobilo
       ON DELETE CASCADE
 );
 
-INSERT INTO health_reports(id_clients, id_employee, description) VALUES (1, 1, 'patient died');
+--INSERT INTO health_reports(id_clients, id_employee, description) VALUES (1, 1, 'patient died');
 INSERT INTO health_reports(id_clients, id_employee, description) VALUES (1, 1, 'patient was resurrected');
 INSERT INTO health_reports(id_clients, id_employee, description) VALUES (2, 2, 'patient took medication');
-INSERT INTO health_reports(id_clients, id_employee, description) VALUES (2, 2, 'patient was killed');
+--INSERT INTO health_reports(id_clients, id_employee, description) VALUES (2, 2, 'patient was killed');
 
 -- [{key: '1', firstname: 'Zuzana', lastname: 'Kovacova', arrival: '7:59:48', lunch_from: '12:00:01', lunch_to: '12:25:14', departure:  '16:03:00', holiday: false, sickleave: false},
 --                         {key: '2', firstname: 'Natalia', lastname: 'Cervena', arrival: '7:50:32', lunch_from: '12:00:00', lunch_to:  '12:29:51', departure:  '16:01:00', holiday: false, sickleave: false},

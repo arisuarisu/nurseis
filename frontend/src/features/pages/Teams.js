@@ -4,15 +4,22 @@ import { EdiTable } from '../components/EdiTable';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
-  fetchClients,
-  selectClients
-} from './clientsSlice';
+  fetchTeamMembers,
+  fetchCalendar,
+  selectTmembers,
+  selectLoading,
+  selectCalendar,
+  newTeam,
+  addTeam,
+  editTeam,
+  deleteTeam
+} from '../pages/teamsSlice';
 import { Card, Row, Col, Typography, Popconfirm, Calendar, Tag, Select} from 'antd';
 import { Layout, Table, Breadcrumb, Button } from 'antd';
 const { Content, Header, Footer } = Layout;
 const { Title } = Typography;
 const { Option } = Select;
-const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
+//const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
 // const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
 // {key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
 // {key:'2', firstname:'Zuzana', lastname:'Mikusova', address:'Tovarniky', team: 'MOJZIS'},
@@ -27,11 +34,13 @@ export function Teams() {
   const dispatch = useDispatch();
   //const [disabledadd, setDisabledadd] = useState(false);
   const [chosenteam, setChosenteam] = useState(false);
-  //const clientslistredux = useSelector(selectClients);
- // let clientslist = clientslistredux.map(item => ({ ...item }))
-  //console.log(clientslist, "vypisujem clientslist")
-  //const clientslist2 = firstrow.concat(clientslist);
-  //console.log(clientslist2, "vypisujem clientslist2")
+  const calendata = useSelector(selectCalendar);
+  let data=[]
+  for(let i=0;i>calendata.length;i++){
+    for(let j=calendata[i].day_from;j<=calendata[i].day_to;j++){
+      data[i].push({key: i, nurse: calendata[i].n_first+calendata[i].n_last, client: calendata[i].c_first+calendata[i].c_last, day: j})
+    }
+  }
 
     const teams = [{name: 'Team 1', care: [{nurse: 'Horvathova', client: 'Joe Smith'},
                                             {nurse: 'Cervena', client: 'Joe Smith'},
@@ -114,7 +123,7 @@ export function Teams() {
           <Row>
             <Col>
                 <Card>
-                    <Select defaultValue="All teams" style={{ width: 120 }} onChange={handleChange} style={{  zIndex: 2}}>
+                    <Select defaultValue="All teams" style={{ width: 120 }} onChange={handleChange} style={{ zIndex: 2}}>
                         <Option value="allteams">All teams</Option>
                         {teams.map((team, index) => (<Option value={index}>{team.name}</Option>))}
                         

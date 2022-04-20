@@ -11,25 +11,26 @@ Session.addAxiosInterceptors(axios);
 //   })
 
 export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) => {
-  const res = await axios.get("/teams/tmem", {date: members.date}).then(res => res.data)
-  //console.log('fetchujem teams')
+  console.log('vypisujem selected time: ', members.date)
+  const res = await axios.post("/teams/tmem", {year: members.year, month: members.month}).then(res => res.data)
+  console.log('vypisujem selected time: ', members.date)
   return res;
   })
 
   export const fetchMembers = createAsyncThunk('teams/mem', async (members) => {
-    const res = await axios.get("/teams/mem", {date: members.date}).then(res => res.data)
+    const res = await axios.post("/teams/mem", {year: members.year, month: members.month}).then(res => res.data)
     //console.log('fetchujem teams')
     return res;
     })
 
     export const fetchTeamPatients = createAsyncThunk('teams/tpat', async (patients) => {
-      const res = await axios.get("/teams/tpat", {date: patients.date}).then(res => res.data)
+      const res = await axios.post("/teams/tpat", {date: patients.date}).then(res => res.data)
       //console.log('fetchujem teams')
       return res;
       })
 
     export const fetchPatients = createAsyncThunk('teams/pat', async (patients) => {
-      const res = await axios.get("/teams/pat", {date: patients.date}).then(res => res.data)
+      const res = await axios.post("/teams/pat", {date: patients.date}).then(res => res.data)
       //console.log('fetchujem teams')
       return res;
       })
@@ -60,6 +61,14 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
           dispatch(fetchTeamMembers())
           return res;
           })
+
+          export const deleteTeam = createAsyncThunk('teams/delete', async (team, {dispatch}) => {
+            const res = await axios.post("/teams/delete", {
+                id: team.id
+            }).then(res => res.data)
+            dispatch(fetchTeamMembers())
+            return res;
+            })
 
         export const addMember = createAsyncThunk('teams/memadd', async (member, {dispatch}) => {
           const res = await axios.post("/teams/memadd", {
@@ -135,9 +144,15 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
                   return res;
                   })
 
+                  export const fetchCalendar = createAsyncThunk('teams/cal', async (cal) => {
+                    const res = await axios.post("/teams/cal", {id_team: cal.id_team, year: cal.year, month: cal.month}).then(res => res.data)
+                    //console.log('fetchujem teams')
+                    return res;
+                    })
+
 const teamsSlice = createSlice({
   name: 'teams',
-  initialState: { tmembers: [], members: [], patients: [], tpatients: [], loading: true },
+  initialState: { tmembers: [], members: [], patients: [], tpatients: [], calendar: [], loading: true },
   reducers: {
   },
   extraReducers: {
@@ -183,6 +198,16 @@ const teamsSlice = createSlice({
     [fetchPatients.rejected]: (state, action) => {
         state.loading=false
     },
+    [fetchCalendar.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchCalendar.fulfilled]: (state, action) => {
+      state.loading=false
+      state.calendar=action.payload
+    },
+    [fetchCalendar.rejected]: (state, action) => {
+        state.loading=false
+    },
   },
 })
 
@@ -190,6 +215,7 @@ export const selectTmembers = state => state.teams.tmembers;
 export const selectMembers = state => state.teams.members;
 export const selectTpatients = state => state.teams.tpatients;
 export const selectPatients = state => state.teams.patients;
+export const selectCalendar = state => state.teams.calendar;
 export const selectLoading = state => state.teams.loading;
 
 export default teamsSlice.reducer;

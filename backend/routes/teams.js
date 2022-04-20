@@ -38,6 +38,17 @@ router.post('/edit', verifySession(), async function(req, res, next) {
 
   //delete team
 
+  router.post('/delete', verifySession(), async function(req, res, next) {
+    try {
+      //let id = req.session.getUserId();
+      //console.log(req.body.diagnosis, " vypisujem diagnozy z noveho clienta")
+      res.json(await teams.deleteTeam(req.body.id));
+    } catch (err) {
+      console.error(`Error while deleting a team`, err.message);
+      next(err);
+    }
+  });
+
   router.post('/teamadd', verifySession(), async function(req, res, next) {
     try {
       //let id = req.session.getUserId();
@@ -49,22 +60,23 @@ router.post('/edit', verifySession(), async function(req, res, next) {
     }
   });
 
-  router.get('/tmem', verifySession(), async function(req, res, next) {
+  router.post('/tmem', verifySession(), async function(req, res, next) {
     try {
       // console.log(res.body.firstname, "vypisujem klientov")
       //console.log(await teams.getTeams())
-      res.json(await teams.getTeamMembers(req.body.date));
+      console.log('routes vypusujem tmem selected date', req.body.year, req.body.month )
+      res.json(await teams.getTeamMembers(req.body.year, req.body.month));
     } catch (err) {
       console.error(`Error while getting team members`, err.message);
       next(err);
     }
   });
 
-  router.get('/mem', verifySession(), async function(req, res, next) {
+  router.post('/mem', verifySession(), async function(req, res, next) {
     try {
       // console.log(res.body.firstname, "vypisujem klientov")
       //console.log(await teams.getTeams())
-      res.json(await teams.getMembers(req.body.date));
+      res.json(await teams.getMembers(req.body.year, req.body.month));
     } catch (err) {
       console.error(`Error while getting members`, err.message);
       next(err);
@@ -104,7 +116,7 @@ router.post('/edit', verifySession(), async function(req, res, next) {
     }
   });
 
-  router.get('/tpat', verifySession(), async function(req, res, next) {
+  router.post('/tpat', verifySession(), async function(req, res, next) {
     try {
       // console.log(res.body.firstname, "vypisujem klientov")
       //console.log(await teams.getTeams())
@@ -115,7 +127,7 @@ router.post('/edit', verifySession(), async function(req, res, next) {
     }
   });
 
-  router.get('/pat', verifySession(), async function(req, res, next) {
+  router.post('/pat', verifySession(), async function(req, res, next) {
     try {
       // console.log(res.body.firstname, "vypisujem klientov")
       //console.log(await teams.getTeams())
@@ -155,6 +167,17 @@ router.post('/edit', verifySession(), async function(req, res, next) {
       res.json(await teams.deletePatient(req.body.id, req.body.pat_from, req.body.pat_to));
     } catch (err) {
       console.error(`Error while editing a member`, err.message);
+      next(err);
+    }
+  });
+
+  router.post('/cal', verifySession(), async function(req, res, next) {
+    try {
+      //let id = req.session.getUserId();
+      //console.log(req.body.diagnosis, " vypisujem diagnozy z noveho clienta")
+      res.json(await teams.getTeamCalendar(req.body.id_team, req.body.year, req.body.month));
+    } catch (err) {
+      console.error(`Error while getting a calendar`, err.message);
       next(err);
     }
   });

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // import { EdiTable } from '../components/EdiTable';
 // import { EdiTable2 } from '../components/EdiTable2';
 import { EditableTeams } from '../components/EditableTeams';
+import { EditableTeam } from '../components/EditableTeam';
 // import { EditableTeammembers } from '../components/EditableTeammembers';
 // import { EditableTeamclients } from '../components/EditableTeamclients';
 import { NestedTeams } from '../components/NestedTeams';
@@ -36,7 +37,8 @@ const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', 
 // };
 
 export function ManagingTeams() {
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const [TeamTable, setTeamTable] = useState(0);
   // const [newclient, setNewclient] = useState(false);
   //const clientslistredux = useSelector(selectClients);
   //let clientslist = clientslistredux.map(item => ({ ...item }))
@@ -82,6 +84,14 @@ export function ManagingTeams() {
   //   dispatch(fetchClients())
   //       },[dispatch]);
 
+  const manage = (record) => {
+      setTeamTable(parseInt(record.key, 10));
+    }
+
+    const setZero = () => {
+      setTeamTable(0);
+    }
+
   return (
     <>
     <Layout className="layout" hasSider>
@@ -96,25 +106,25 @@ export function ManagingTeams() {
 
           {/* CONTENT */}
 
-          {/* <Row>
-            <EditableTeams />
-          </Row> */}
+          <Row>
+          {/* {TeamTable===0 ?
+          <EditableTeams manage={manage}/> :  */}
+            <EditableTeam manage={setZero} order={TeamTable}/>
+          {/* }   */}
+          </Row>
 
-          <div className="card-container">
+          {/* <div className="card-container">
     <Tabs type="card">
       <TabPane tab="Managing team members" key="1">
-      {/* <EditableTeams /> */}
+      
       <NestedTeams />
       </TabPane>
       <TabPane tab="Managing clients in teams" key="2">
       <NestedTeams />
-      {/* <EditableTeammembers /> */}
+      
       </TabPane>
-      {/* <TabPane tab="Managing clients in teams" key="3">
-      <EditableTeamclients />
-      </TabPane> */}
     </Tabs>
-  </div>,
+  </div> */}
 
           {/* END OF CONTENT */}
 
