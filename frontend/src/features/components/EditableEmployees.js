@@ -172,19 +172,49 @@ export function EditableEmployees () {
     {
       title: 'Firstname',
       dataIndex: 'firstname',
-      width: '35%',
+      width: '11%',
       editable: true,
     },
     {
       title: 'Lastname',
       dataIndex: 'lastname',
-      width: '35%',
+      width: '12%',
+      editable: true,
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      width: '11%',
+      editable: true,
+    },
+    {
+      title: 'Contract from',
+      dataIndex: 'contractf',
+      width: '11%',
+      editable: true,
+    },
+    {
+      title: 'Contract to',
+      dataIndex: 'contractt',
+      width: '11%',
+      editable: true,
+    },
+    {
+      title: 'GDPR',
+      dataIndex: 'gdpr',
+      width: '11%',
+      editable: true,
+    },
+    {
+      title: 'Covid vaccine',
+      dataIndex: 'vaccine',
+      width: '11%',
       editable: true,
     },
     {
       title: 'Photo',
       dataIndex: 'photo',
-      width: '15%',
+      width: '11%',
       editable: false,
       render: (_, record) => {
         const editable = isEditing(record);
@@ -199,9 +229,9 @@ export function EditableEmployees () {
         )},
     },
     {
-      title: 'Operation',
+      title: 'Action',
       dataIndex: 'operation',
-      width: '15%',
+      width: '11%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (

@@ -109,6 +109,7 @@ export function ManagingTeams() {
           <Row>
           {/* {TeamTable===0 ?
           <EditableTeams manage={manage}/> :  */}
+            <EditableTeams manage={manage}/>
             <EditableTeam manage={setZero} order={TeamTable}/>
           {/* }   */}
           </Row>

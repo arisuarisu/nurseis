@@ -7,20 +7,27 @@ import {
   DownloadOutlined 
 } from '@ant-design/icons';
 import {
-    fetchTeamMembers,
-    selectTmembers,
+    fetchNurses,
+    fetchClients,
+    fetchTeamPatients,
+    selectNurses,
+    selectClients,
     selectLoading,
-    newTeam,
-    addTeam,
-    editTeam,
-    deleteTeam
+    selectTpatients,
+    selectPatients,
+    addPatient,
+    editPatient,
+    deletePatient
   } from '../pages/teamsSlice';
 
 import { CSVLink } from "react-csv";
+import moment from 'moment';
 const { Option } = Select;
 
 const headers_teams = [
   { label: "Teams", key: "teams" },
+  // { label: "", key: "teams" },
+  // { label: "Teams", key: "teams" },
   { label: "Members", key: "members" }
 ];
 
@@ -32,19 +39,29 @@ inputType,
 record,
 index,
 children,
-deleteteam,
-manage,
+//deleteteam,
+//manage,
+nurses,
+clients,
+setPatFrom,
+setPatTo,
 ...restProps
 }) => {
 const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+
+// const onChange = value =>{
+//   record.pat_from=value.format('YYY-MM-DD')
+//   console.log('vypisujem patfrom po change v editable cell', record.pat_from)
+// }
 //console.log('vypisujem dataindex', props.record)
-if(dataIndex==='members'){
-  console.log('vypisujem members editable cell record', record)
-  console.log('vypisujem members editable cell children', children)
+if(dataIndex==='nurse'){
+  //console.log('vypisujem members editable cell record', record)
+  //console.log('vypisujem members editable cell children', children)
+  console.log('vypisujem nurses v editable cell', nurses)
   return (
     <td {...restProps}>
       {/* {console.log('vypisujem record vovnutri', record)} */}
-    {/* {editing ? (
+    {editing ? (
       <Form.Item
         name={dataIndex}
         style={{
@@ -58,49 +75,91 @@ if(dataIndex==='members'){
         ]}
       >
          <Select
-      mode="multiple"
-      placeholder="Select members"
+      //mode="multiple"
+      placeholder="Select a nurse"
       //defaultValue={record.diagnosis} //array expected
       //defaultValue={members}
       defaultValue={children[1]}
       style={{ width: '100%' }}
     >
-      {children[1].map(option => {
+      {nurses.map(option => {
         return(
-      <Option value={option}>{option}</Option>)
+      <Option value={option.id}>{option.firstname+' '+option.lastname}</Option>)
        })} 
     </Select>
       </Form.Item>
-      ) : ( */}
+      ) : (
     
       <>
-      {record.members.map(option => {
-      // data[record.key].map(option => {
-        return(
-        <Tag>{option}</Tag>)
-         })} 
-         </>
+        <Tag>{record.nurse}</Tag>
+         </>)}
     
     
   </td>
   )
 }
-else if(dataIndex==='operation'){
+else if(dataIndex==='client'){
   return(
-    <td {...restProps}>
-  <span>
-            <Popconfirm title="Sure to delete?" onConfirm={deleteteam(record)}>
-              <a>Delete</a>
-            </Popconfirm>
-            <Typography.Link
-              onClick={manage(record)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Manage
-            </Typography.Link>
-          </span>
+  <td {...restProps}>
+      {/* {console.log('vypisujem record vovnutri', record)} */}
+    {editing ? (
+      <Form.Item
+        name={dataIndex}
+        style={{
+          margin: 0,
+        }}
+        rules={[
+          {
+            required: true,
+            message: `Please Input ${title}!`,
+          },
+        ]}
+      >
+         <Select
+      //mode="multiple"
+      placeholder="Select a client"
+      //defaultValue={record.diagnosis} //array expected
+      //defaultValue={members}
+      defaultValue={children[1]}
+      style={{ width: '100%' }}
+    >
+      {clients.map(option => {
+        return(
+      <Option value={option.id}>{option.nurse}</Option>)
+       })} 
+    </Select>
+      </Form.Item>
+      ) : (
+    
+      <>
+      <Tag>{record.client}</Tag>
+         </>)}
+          </td>
+  )
+}
+else if(dataIndex==='pat_from'){
+  return(
+  <td {...restProps}>
+    {editing ? (
+    <DatePicker selected={moment(record.pat_from)} onChange={setPatFrom} />
+      ) : (
+    
+      <>
+      {record.pat_from}
+         </>)}
+          </td>
+  )
+}
+else if(dataIndex==='pat_to'){
+  return(
+  <td {...restProps}>
+    {editing ? (
+    <DatePicker selected={moment(record.pat_to)} onChange={setPatTo} />
+      ) : (
+    
+      <>
+      {record.pat_to}
+         </>)}
           </td>
   )
 }
@@ -134,7 +193,7 @@ export function EditableTeam (props) {
     const todaydate = new Date();
     const today = [todaydate.getFullYear(), todaydate.getMonth()+1]
   const [form] = Form.useForm();
-  const datadata = useSelector(selectTmembers);
+  const datadata = useSelector(selectTpatients);
   console.log('vypisujem timy', datadata)
   const [data, setData] = useState([]);
   //console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
@@ -142,14 +201,25 @@ export function EditableTeam (props) {
   // const [rerender, setRerender] = useState(false)
   //console.log(data, 'vypisujem data z editable2')
   const loading = useSelector(selectLoading);
+  const [nurses, setNurses] = useState([]);
+  const nur = useSelector(selectNurses);
+  // setNurses([{id: '0', firstname: 'Baka', lastname: 'Loca'}])
+  const [clients, setClients] = useState([]);
+  const cli = useSelector(selectClients);
   const [newclient, setNewclient] = useState(false);
   // const datas=props.data
   // const [data, setData]=useState(data);
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
   const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedTeam, setSelectedTeam] = useState('1');
+  const [datePickFrom, setDatePickFrom] = useState(today);
+  const [datePickTo, setDatePickTo] = useState(today);
 
-  const emptyteam = [{key: '0', team: '', members: [], editable: true}]
+  //const nurses=['Pavol Majesky', 'Zuzana Kovacova', 'Antonia Milatova']
+  //const clients=['Rastislav Novomesky', 'Linda Bezakova', 'Oto White']
+
+  const emptyteam = [{key: '0', nurse: '', client: '', pat_from: '', pat_to: '', editable: true}]
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -172,13 +242,32 @@ export function EditableTeam (props) {
     console.log(selectedDate, 'vypisujem selected date');
   }
 
+  function onDatePickFrom(_, dateString){
+    const date=dateString.split("-");
+    setDatePickFrom(date)
+  }
+
+  function onDatePickTo(_, dateString){
+    const date=dateString.split("-");
+    setDatePickTo(date)
+  }
+
+  const setPatFrom = value => {
+    setDatePickFrom(value.format('YYYY-MM-DD'))
+    //console.log(value.format('YYYY-MM-DD'), "VYPISUJEM DATEPICKFROM")
+  }
+
+  const setPatTo = value => {
+    setDatePickTo(value.format('YYYY-MM-DD'))
+  }
+
   const title = () => {
     return(
       <Row justify="space-between" align="middle">
-        <Col>Team</Col>
+        <Col>Team {selectedTeam}</Col>
         <Col>
         <DatePicker onChange={onDateSelect} picker="month" />
-            <Button type="primary" onClick={() => dispatch(addTeam({name: 'asdasd'}))} >Add team</Button> 
+            <Button type="primary" onClick={addnew} disabled={newclient} >Add shift</Button> 
         </Col>
       </Row>
     )
@@ -193,14 +282,29 @@ export function EditableTeam (props) {
   }
 
   useEffect(() => {
-    dispatch(fetchTeamMembers({year: selectedDate[0], month: selectedDate[1]}))
-        },[dispatch]);
+    dispatch(fetchTeamPatients({id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}))
+    dispatch(fetchNurses)
+    dispatch(fetchClients)
+  },[dispatch]);
 
         useEffect(() => {
           console.log('vypisujem data zo stavu po rendernuti useeffect', data)
           //props.rerender()
           setData(datadata)
               },[datadata]);
+      
+              useEffect(() => {
+                console.log('vypisujem new nursess names', nurses)
+                //setNurses(nur)
+                setNurses([{id: '0', firstname: 'Baka', lastname: 'Loca'}])
+                    },[nur]);
+
+        useEffect(() => {
+                console.log('vypisujem new clients names', clients)
+                //props.rerender()
+                setClients(cli)
+                //clients=clients
+                    },[cli]);
 
               useEffect(() => {
                 console.log('new was clicked')
@@ -225,23 +329,36 @@ export function EditableTeam (props) {
 
   const cancel = () => {
     setEditingKey('');
+    setDatePickFrom('')
+    setDatePickTo('')
   };
 
   const deleteteam = (record) => {
-    dispatch(deleteTeam({id: record.key}))
+    dispatch(deletePatient({id: record.key}))
   };
 
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-      console.log('vypisujem ROW: ', row)
-      console.log('vypisujem key v save', key, typeof(key))
-      // if(key==='0'){
-      //   dispatch(newTeam({members: row.members}))
-      // }
-      // else{
-      // dispatch(editTeam({id: key, members: row.members}))
-      // }
+      //console.log('vypisujem ROW: ', row)
+      //console.log('vypisujem key v save', key, typeof(key))
+
+      //const nurse=nurses.filter(nurse => row.nurse === data[key].nurse_id)
+      //const nurse=
+      //const nurse_id=nurse.id;
+      //const client=clients.filter(client => client.firstname === data[key].firstname && client.lastname === data[key].lastname)
+      //const client_id=client.id;
+
+      console.log('vypisujem id clienta a nursky', row.client, row.nurse)
+
+      if(key==='0'){
+        dispatch(addPatient({nurse: data[key].nurse_id, client: data[key].client_id, pat_from: row.pat_from, pat_to: row.pat_to}))
+      }
+      else{
+      dispatch(editPatient({id: key, nurse: data[key].nurse_id, client: data[key].client_id, pat_from: row.pat_from, pat_to: row.pat_to}))
+      }
+      setDatePickFrom('')
+      setDatePickTo('')
       
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -249,6 +366,8 @@ export function EditableTeam (props) {
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
+        newData[index].pat_from=datePickFrom;
+        newData[index].pat_to=datePickTo;
         setData(newData);
         setEditingKey('');
       } else {
@@ -267,15 +386,13 @@ export function EditableTeam (props) {
       title: 'Nurse',
       dataIndex: 'nurse',
       width: '20%',
-      editable: false,
-      //render: (_, record) => "Tím "+record.key,
+      editable: true,
     },
     {
       title: 'Client',
       dataIndex: 'client',
       width: '20%',
-      editable: false,
-      //render: (_, record) => "Tím "+record.key,
+      editable: true,
     },
     {
       title: 'From',
@@ -302,12 +419,12 @@ export function EditableTeam (props) {
               <a>Delete</a>
             </Popconfirm>
             <Typography.Link
-              onClick={() => props.manage(record.key)}
+              onClick={() => save(record.key)}
               style={{
                 marginRight: 8,
               }}
             >
-              Manage
+              Save
             </Typography.Link>
           </span>
         ) : (
@@ -332,6 +449,9 @@ export function EditableTeam (props) {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        nurses: nurses,
+        clients: clients,
+        setPatFrom: setPatFrom
         //deleteteam: deleteteam,
         //manage: props.manage
       }),

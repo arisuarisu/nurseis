@@ -18,7 +18,93 @@ import {
 import { CSVLink } from "react-csv";
 const { Option } = Select;
 
-
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  diagnoseslist,
+  ...restProps
+}) => {
+  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+  const selectChange = value => {
+    console.log('vypisujem diagnosis select value', value)
+  }
+  if(dataIndex==='diagnosis'){
+    //console.log('vypisujem diagnoses editable cell record', record)
+    //console.log('vypisujem diagnoses editable cell children', children)
+    return (
+      <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: false,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+           <Select
+        mode="multiple"
+        allowClear
+        placeholder="Select diagnoses"
+        //defaultValue={record.diagnosis} //array expected
+        //defaultValue={members}
+        initialValues={children[1]}
+        style={{ width: '100%' }}
+        onChange={selectChange}
+      >
+        {diagnoseslist.map(option => {
+          return(
+        <Option value={option}>{option}</Option>)
+         })} 
+      </Select>
+        </Form.Item>
+      ) : (
+        <>
+        {//record.diagnoses.map(option => {
+          //['alic', 'palic'].map(option => {
+          record.diagnosis.map(option => {
+          return(
+          <Tag>{option}</Tag>)
+           })} 
+           
+           </>
+      )}
+    </td>
+    )
+  }
+  else{
+  return (  
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: true,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );}
+};
 
 export function EditableClients () {
     const dispatch = useDispatch();
@@ -37,6 +123,7 @@ export function EditableClients () {
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
   const [selectArray, setSelectArray] = useState([]);
+  const diagnoseslist = ['ostheoporosis', 'anemia', 'lying patient']
 
   const emptyclient = [{key: '0', firstname: '', lastname: '', address: '', editable: true}]
 
@@ -49,88 +136,6 @@ export function EditableClients () {
   const selectChange = (array) => { 
     setSelectArray(array)
   }
-
-  const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-  }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-    if(dataIndex==='diagnoses'){
-      console.log('vypisujem diagnoses editable cell record', record)
-      console.log('vypisujem diagnoses editable cell children', children)
-      return (
-        <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            rules={[
-              {
-                required: false,
-                message: `Please Input ${title}!`,
-              },
-            ]}
-          >
-             <Select
-          mode="multiple"
-          placeholder="Select diagnoses"
-          //defaultValue={record.diagnosis} //array expected
-          //defaultValue={members}
-          defaultValue={children[1]}
-          style={{ width: '100%' }}
-          onChange={selectChange}
-        >
-          {children[1].map(option => {
-            return(
-          <Option value={option}>{option}</Option>)
-           })} 
-        </Select>
-          </Form.Item>
-        ) : (
-          <>
-          {//record.diagnoses.map(option => {
-            ['alic', 'palic'].map(option => {
-            return(
-            <Tag>{option}</Tag>)
-             })} 
-             
-             </>
-        )}
-      </td>
-      )
-    }
-    else{
-    return (  
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            rules={[
-              {
-                required: true,
-                message: `Please Input ${title}!`,
-              },
-            ]}
-          >
-            {inputNode}
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    );}
-  };
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -213,14 +218,15 @@ export function EditableClients () {
     try {
       const row = await form.validateFields();
       console.log('vypisujem ROW: ', row)
+      //console.log()
       //dispatch(newClient({firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: ['1', '2']}))
       if(key==='0'){
-        console.log('dispatching new client with values', row.firstname, row.lastname, row.address)
-        dispatch(newClient({firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: [...selectArray]}))
+        console.log('dispatching new client with values', row.firstname, row.lastname, row.address, row.diagnosis)
+        dispatch(newClient({firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: row.diagnosis}))
         }
         else{
-          console.log('dispatching edit client with values', key, row.firstname, row.lastname, row.address)
-        dispatch(editClient({id: key, firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: [...selectArray]}))
+          console.log('dispatching edit client with values', key, row.firstname, row.lastname, row.address, row.diagnosis)
+        dispatch(editClient({id: key, firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: row.diagnosis}))
         }
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -268,6 +274,7 @@ export function EditableClients () {
       title: 'Diagnosis',
       dataIndex: 'diagnosis',
       width: '20%',
+      editable: true,
     },
     {
       title: 'Photo',
@@ -286,7 +293,7 @@ export function EditableClients () {
         )},
     },
     {
-      title: 'Operation',
+      title: 'Action',
       dataIndex: 'operation',
       width: '10%',
       render: (_, record) => {
@@ -332,6 +339,7 @@ export function EditableClients () {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        diagnoseslist: diagnoseslist
       }),
     };
   });

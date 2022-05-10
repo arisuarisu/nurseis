@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { EdiTable } from '../components/EdiTable';
+import { Organizer } from '../components/Organizer';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
+  fetchTeams,
   fetchTeamMembers,
   fetchCalendar,
   selectTmembers,
@@ -14,8 +16,9 @@ import {
   editTeam,
   deleteTeam
 } from '../pages/teamsSlice';
-import { Card, Row, Col, Typography, Popconfirm, Calendar, Tag, Select} from 'antd';
+import { Card, Row, Col, Typography, Popconfirm, Calendar, Tag, Select, DatePicker} from 'antd';
 import { Layout, Table, Breadcrumb, Button } from 'antd';
+import moment from 'moment';
 const { Content, Header, Footer } = Layout;
 const { Title } = Typography;
 const { Option } = Select;
@@ -33,13 +36,54 @@ const { Option } = Select;
 export function Teams() {
   const dispatch = useDispatch();
   //const [disabledadd, setDisabledadd] = useState(false);
-  const [chosenteam, setChosenteam] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState('3');
+  const [selectedYear, setSelectedYear] = useState('2022');
+  const [selectedMonth, setSelectedMonth] = useState('4');
   const calendata = useSelector(selectCalendar);
+  console.log('vypisujem calendata z databazky', calendata)
+  console.log('vypisujem calendata length', calendata.length)
   let data=[]
-  for(let i=0;i>calendata.length;i++){
+  let key=0
+  for(let i=0;i<calendata.length;i++){
+    console.log('CACACA')
     for(let j=calendata[i].day_from;j<=calendata[i].day_to;j++){
-      data[i].push({key: i, nurse: calendata[i].n_first+calendata[i].n_last, client: calendata[i].c_first+calendata[i].c_last, day: j})
+      data.push({key: key, nurse: calendata[i].n_first+' '+calendata[i].n_last, client: calendata[i].c_first+' '+calendata[i].c_last, day: j})
+      
+      console.log('vypisujem data-i po prerobeni v calendata', data[key])
+      key++
     }
+  }
+  console.log('vypisujem data z calendara', data)
+
+  const onDateSelect = (date)=>{
+    console.log('selecting date', date)
+  }
+
+  const calendartitle = () => {
+    return(
+      <Row justify="space-between" align="middle">
+        <Col>
+        
+        {/* <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+      <Option value="jack">Jack</Option>
+      <Option value="lucy">Lucy</Option>
+      <Option value="disabled" disabled>
+        Disabled
+      </Option>
+      <Option value="Yiminghe">yiminghe</Option>
+    </Select> */}
+    <Select defaultValue="All teams" style={{ width: 120, zIndex: 2 }} onChange={handleChange} >
+                        <Option value="allteams">All teams</Option>
+                        {teams.map((team, index) => (<Option value={index}>{team.name}</Option>))}
+                        
+                    </Select>
+        </Col>
+
+        <Col>
+        <DatePicker onChange={onDateSelect} picker="month" />
+        </Col>
+      </Row>
+    )
   }
 
     const teams = [{name: 'Team 1', care: [{nurse: 'Horvathova', client: 'Joe Smith'},
@@ -59,38 +103,39 @@ export function Teams() {
                 ]
 
   function getListData(value) {
-      let listData;
-      switch (value.date()) {
-        case 15:
-          listData = [
-            { type: '#0b8a46', content: 'KOVACOVA' },
-            { type: '#1637db', content: 'HORVATHOVA' },
-            { type: '#5f43d9', content: 'GAJDOS' },
-          ]; break;
-          case 19:
-          listData = [
-            { type: '#0b8a46', content: 'BAGAROVA' },
-            { type: '#1637db', content: 'BIELIK' },
-          ]; break;
-          case 23:
-          listData = [
-            { type: '#0b8a46', content: 'MAJESKY' },
-            { type: '#1637db', content: 'GAJDOS' },
-            { type: '#5f43d9', content: 'BIELA' },
-          ]; break;
-        default:
-      }
+      let listData = data.filter(item => item.day===value.date());
+      console.log('vypisujem listdata z calen funkcie', listData)
+      console.log('vypisujem value.date', value.date())
+      console.log('vypisujem value', value.format('YYYY-MM-DD'))
+      // switch (value.date()) {
+      //   case 15:
+      //     listData = data.filter(item => item.day=='15'); break;
+      //     case 19:
+      //     listData = [
+      //       { type: '#0b8a46', content: 'BAGAROVA' },
+      //       { type: '#1637db', content: 'BIELIK' },
+      //     ]; break;
+      //     case 23:
+      //     listData = [
+      //       { type: '#0b8a46', content: 'MAJESKY' },
+      //       { type: '#1637db', content: 'GAJDOS' },
+      //       { type: '#5f43d9', content: 'BIELA' },
+      //     ]; break;
+      //   default:
+      // }
       return listData || [];
+      //return listData = data.filter(item => item.day===value.date()) || [];
     }
     
     function dateCellRender(value) {
       const listData = getListData(value);
+      console.log('vypisujem listdata z datecell renderu', listData)
       return (
         <ul className="events" style={{position: 'relative', right: 30}}>
           {
             listData.map(item => (
-              <li key={item.content} style={{listStyle: 'none'}}>
-                <Tag color={item.type}>{item.content}</Tag>
+              <li key={item.key} style={{listStyle: 'none'}}>
+                <Tag color='green'>{item.nurse}</Tag><Tag color='blue'>{item.client}</Tag>
               </li>
             ))
           }
@@ -99,12 +144,17 @@ export function Teams() {
     }
 
     function handleChange(value) {
-        console.log(`selected ${value}`);
+        console.log(`selected ${value}`, 'vypisujem zmenu datumu');
       }
 
-//   useEffect(() => {
-//           dispatch(fetchClients());
-//         },[dispatch]);
+  useEffect(() => {
+          dispatch(fetchCalendar({id_team: selectedTeam, year: selectedYear, month: selectedMonth}));
+        },[dispatch]);
+
+        useEffect(() => {
+          //dispatch(fetchCalendar());
+          console.log('vypisujem zmenu calendata')
+        },[calendata]);
 
   return (
     <>
@@ -120,16 +170,13 @@ export function Teams() {
 
           {/* CONTENT */}
 
-          <Row>
-            <Col>
-                <Card>
-                    <Select defaultValue="All teams" style={{ width: 120 }} onChange={handleChange} style={{ zIndex: 2}}>
-                        <Option value="allteams">All teams</Option>
-                        {teams.map((team, index) => (<Option value={index}>{team.name}</Option>))}
-                        
-                    </Select>
-                    <Calendar dateCellRender={dateCellRender}  style={{position: 'relative', bottom: 44,  zIndex: 1}}/>
+          <Row style={{width: '100%'}}>
+            <Col style={{width: '100%'}}>
+                <Card style={{width: '100%'}}>
+                    
+                    {/* <Calendar dateCellRender={dateCellRender} mode='month' defaultValue={moment('2022-04-25')} headerRender={calendartitle} style={{position: 'relative', bottom: 44,  zIndex: 1}}/> */}
                     {/* style={{listStyle: 'none'}} */}
+                    <Organizer style={{width: '100%'}}/>
                 </Card>
             </Col>
           </Row>

@@ -10,6 +10,16 @@ Session.addAxiosInterceptors(axios);
 //   return res;
 //   })
 
+export const fetchNurses = createAsyncThunk('teams/getnurses', async () => {
+  const res = await axios.get("/teams/nursenames").then(res => res.data)
+  return res;
+  })
+
+  export const fetchClients = createAsyncThunk('teams/getclients', async () => {
+    const res = await axios.get("/teams/clientnames").then(res => res.data)
+    return res;
+    })
+
 export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) => {
   console.log('vypisujem selected time: ', members.date)
   const res = await axios.post("/teams/tmem", {year: members.year, month: members.month}).then(res => res.data)
@@ -24,16 +34,29 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
     })
 
     export const fetchTeamPatients = createAsyncThunk('teams/tpat', async (patients) => {
-      const res = await axios.post("/teams/tpat", {date: patients.date}).then(res => res.data)
-      //console.log('fetchujem teams')
+      console.log('vypisujem selected time: ', patients.date)
+      const res = await axios.post("/teams/tpat", {id_team: patients.id_team, year: patients.year, month: patients.month}).then(res => res.data)
+      console.log('vypisujem selected time: ', patients.date)
       return res;
       })
+    
+      export const fetchPatients = createAsyncThunk('teams/pat', async (patients) => {
+        const res = await axios.post("/teams/pat", {year: patients.year, month: patients.month}).then(res => res.data)
+        //console.log('fetchujem teams')
+        return res;
+        })
 
-    export const fetchPatients = createAsyncThunk('teams/pat', async (patients) => {
-      const res = await axios.post("/teams/pat", {date: patients.date}).then(res => res.data)
-      //console.log('fetchujem teams')
-      return res;
-      })
+    // export const fetchTeamPatients = createAsyncThunk('teams/tpat', async (patients) => {
+    //   const res = await axios.post("/teams/tpat", {date: patients.date}).then(res => res.data)
+    //   //console.log('fetchujem teams')
+    //   return res;
+    //   })
+
+    // export const fetchPatients = createAsyncThunk('teams/pat', async (patients) => {
+    //   const res = await axios.post("/teams/pat", {date: patients.date}).then(res => res.data)
+    //   //console.log('fetchujem teams')
+    //   return res;
+    //   })
 
   export const newTeam = createAsyncThunk('teams/new', async (team, {dispatch}) => {
     const res = await axios.post("/teams/new", {
@@ -109,10 +132,10 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
 
             export const addPatient = createAsyncThunk('teams/patadd', async (patient, {dispatch}) => {
               const res = await axios.post("/teams/patadd", {
-                  id_team: patient.id_team,
-                  id_client: patient.id_client,
-                  pat_from: patient.mem_from,
-                  pat_to: patient.mem_to
+                  id_nurse: patient.nurse,
+                  id_client: patient.client,
+                  pat_from: patient.pat_from,
+                  pat_to: patient.pat_to
                 //members: [...team.members],
                 //img: client.img
               }).then(res => res.data)
@@ -123,10 +146,10 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
               export const editPatient = createAsyncThunk('teams/patedit', async (patient, {dispatch}) => {
                 const res = await axios.post("/teams/patedit", {
                     id: patient.id,
-                    id_team: patient.id_team,
-                    id_client: patient.id_client,
-                    pat_from: patient.mem_from,
-                    pat_to: patient.mem_to
+                    id_nurse: patient.nurse,
+                    id_client: patient.client,
+                    pat_from: patient.pat_from,
+                    pat_to: patient.pat_to
                   //members: [...team.members],
                   //img: client.img
                 }).then(res => res.data)
@@ -137,8 +160,8 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
                 export const deletePatient = createAsyncThunk('teams/patdelete', async (patient, {dispatch}) => {
                   const res = await axios.post("/teams/patdelete", {
                       id: patient.id,
-                      pat_from: patient.pat_from,
-                      pat_to: patient.pat_to
+                      // pat_from: patient.pat_from,
+                      // pat_to: patient.pat_to
                   }).then(res => res.data)
                   //dispatch(fetchTeams())
                   return res;
@@ -152,10 +175,30 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
 
 const teamsSlice = createSlice({
   name: 'teams',
-  initialState: { tmembers: [], members: [], patients: [], tpatients: [], calendar: [], loading: true },
+  initialState: { nurses: [], clients: [], tmembers: [], members: [], patients: [], tpatients: [], calendar: [], loading: true },
   reducers: {
   },
   extraReducers: {
+    [fetchNurses.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchNurses.fulfilled]: (state, action) => {
+      state.loading=false
+      state.nurses=action.payload
+    },
+    [fetchNurses.rejected]: (state, action) => {
+        state.loading=false
+    },
+    [fetchClients.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchClients.fulfilled]: (state, action) => {
+      state.loading=false
+      state.clients=action.payload
+    },
+    [fetchClients.rejected]: (state, action) => {
+        state.loading=false
+    },
     [fetchTeamMembers.pending]: (state, action) => {
       state.loading=true
     },
@@ -167,6 +210,17 @@ const teamsSlice = createSlice({
     [fetchTeamMembers.rejected]: (state, action) => {
         state.loading=false
     },
+    [fetchTeamPatients.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchTeamPatients.fulfilled]: (state, action) => {
+      state.loading=false
+      //console.log('vypisujem action.payload v teams', action.payload)
+      state.tpatients=action.payload
+    },
+    [fetchTeamPatients.rejected]: (state, action) => {
+        state.loading=false
+    },
     [fetchMembers.pending]: (state, action) => {
       state.loading=true
     },
@@ -175,6 +229,16 @@ const teamsSlice = createSlice({
       state.members=action.payload
     },
     [fetchMembers.rejected]: (state, action) => {
+        state.loading=false
+    },
+    [fetchPatients.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchPatients.fulfilled]: (state, action) => {
+      state.loading=false
+      state.patients=action.payload
+    },
+    [fetchPatients.rejected]: (state, action) => {
         state.loading=false
     },
     [fetchTeamPatients.pending]: (state, action) => {
@@ -211,6 +275,8 @@ const teamsSlice = createSlice({
   },
 })
 
+export const selectNurses = state => state.teams.nurses;
+export const selectClients = state => state.teams.clients;
 export const selectTmembers = state => state.teams.tmembers;
 export const selectMembers = state => state.teams.members;
 export const selectTpatients = state => state.teams.tpatients;
