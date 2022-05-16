@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Tag, Row, Col, Button, Avatar } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Tag, Row, Col, Button, Avatar, DatePicker } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { LoadingTable } from './LoadingTable';
 import {
@@ -15,6 +15,7 @@ import {
   } from '../pages/employeesSlice';
 
 import { CSVLink } from "react-csv";
+import moment from 'moment';
 const { Option } = Select;
 
 const headers_nurses = [
@@ -30,10 +31,129 @@ const EditableCell = ({
   record,
   index,
   children,
+  selectContractf,
+  selectContractt,
   ...restProps
 }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-  return (
+  if(dataIndex==='gdpr'){
+    //console.log('vypisujem diagnoses editable cell record', record)
+    //console.log('vypisujem diagnoses editable cell children', children)
+    return (
+      <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: false,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+           <Select
+        //mode="multiple"
+        allowClear
+        placeholder="Select gdpr approval"
+        //defaultValue={record.diagnosis} //array expected
+        //defaultValue={members}
+        initialValues={children[1]}
+        style={{ width: '100%' }}
+        //onChange={selectChange}
+      >
+        
+        <Option value='yes'>yes</Option>
+        <Option value='no'>no</Option>
+      </Select>
+        </Form.Item>
+      ) : (
+        <>
+        {children}
+           
+           </>
+      )}
+    </td>
+    )
+  }
+  if(dataIndex==='vaccine'){
+    //console.log('vypisujem diagnoses editable cell record', record)
+    //console.log('vypisujem diagnoses editable cell children', children)
+    return (
+      <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: false,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+           <Select
+        //mode="multiple"
+        allowClear
+        placeholder="Select vaccination"
+        //defaultValue={record.diagnosis} //array expected
+        //defaultValue={members}
+        initialValues={children[1]}
+        style={{ width: '100%' }}
+        //onChange={selectChange}
+      >
+        
+        <Option value='yes'>yes</Option>
+        <Option value='no'>no</Option>
+      </Select>
+        </Form.Item>
+      ) : (
+        <>
+        {children}
+           
+           </>
+      )}
+    </td>
+    )
+  }
+  if(dataIndex==='contractf'){
+    //console.log('vypisujem diagnoses editable cell record', record)
+    //console.log('vypisujem diagnoses editable cell children', children)
+    return (
+      <td {...restProps}>
+      {editing ? (
+        <DatePicker defaultValue={moment(record.contractf, 'YYYY-MM-DD')} onChange={selectContractf} />
+      ) : (
+        <>
+        {children}
+           
+           </>
+      )}
+    </td>
+    )
+  }
+  if(dataIndex==='contractt'){
+    //console.log('vypisujem diagnoses editable cell record', record)
+    //console.log('vypisujem diagnoses editable cell children', children)
+    return (
+      <td {...restProps}>
+      {editing ? (
+        <DatePicker defaultValue={moment(record.contractt, 'YYYY-MM-DD')} onChange={selectContractt} />
+      ) : (
+        <>
+        {children}
+           
+           </>
+      )}
+    </td>
+    )
+  }
+  else{
+  return (  
     <td {...restProps}>
       {editing ? (
         <Form.Item
@@ -54,7 +174,7 @@ const EditableCell = ({
         children
       )}
     </td>
-  );
+  );}
 };
 
 export function EditableEmployees () {
@@ -73,6 +193,8 @@ export function EditableEmployees () {
   // const [data, setData]=useState(data);
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
+  const [contractf_date, setContractf_date] = useState('');
+  const [contractt_date, setContractt_date] = useState('');
 
   const emptyclient = [{key: '0', firstname: '', lastname: '', address: '', editable: true}]
 
@@ -83,6 +205,16 @@ export function EditableEmployees () {
       console.log(dataCSV, 'pridavanie rows do dataCSV')
     },
   };
+
+  const selectContractf = (_, date) => {
+    setContractf_date(date)
+    console.log('vypisujem contract date from', date)
+  }
+
+  const selectContractt = (_, date) => {
+    setContractt_date(date)
+    console.log('vypisujem contract date to', date)
+  }
 
   const title = () => {
     return(
@@ -143,9 +275,11 @@ export function EditableEmployees () {
       const row = await form.validateFields();
       console.log('vypisujem ROW: ', row)
       if(editingKey==='0'){
-        dispatch(newEmployee({firstname: row.firstname, lastname: row.lastname}))
+        dispatch(newEmployee({firstname: row.firstname, lastname: row.lastname, phone: row.phone, contractf: contractf_date, contractt: contractt_date, gdpr: row.gdpr, vaccine: row.vaccine}))
+        //dispatch(fetchEmployees())
+        data.slice(0, 1) 
       }else{
-        dispatch(editEmployee({id: key, firstname: row.firstname, lastname: row.lastname}))
+        dispatch(editEmployee({id: key, firstname: row.firstname, lastname: row.lastname, phone: row.phone, contractf: contractf_date, contractt: contractt_date, gdpr: row.gdpr, vaccine: row.vaccine}))
       }
       
       
@@ -166,6 +300,7 @@ export function EditableEmployees () {
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
+    dispatch(fetchEmployees())
   };
 
   const columns_nurses = [
@@ -270,6 +405,8 @@ export function EditableEmployees () {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        selectContractf: selectContractf,
+        selectContractt: selectContractt
       }),
     };
   });

@@ -189,12 +189,13 @@ export function EditableDiagnosis () {
       const row = await form.validateFields();
       console.log('vypisujem ROW: ', row)
       console.log('vypisujem key v save', key, typeof(key))
-      // if(key==='0'){
-      //   dispatch(newTeam({members: row.members}))
-      // }
-      // else{
-      // dispatch(editTeam({id: key, members: row.members}))
-      // }
+      if(key==='0'){
+        dispatch(newDiagnosis({name: row.name, description: row.description, treatment: row.treatment}))
+        data.slice(0, 1)
+      }
+      else{
+      dispatch(editDiagnosis({id: key, name: row.name, description: row.description, treatment: row.treatment}))
+      }
       
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -210,9 +211,11 @@ export function EditableDiagnosis () {
         setEditingKey('');
       }
       setNewclient(false)
+      dispatch(fetchDiagnosis())
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
+    
   };
 
   const columns_teams = [

@@ -42,7 +42,7 @@ async function getClients() {
     const data = await db.query(
       //"SELECT t.id, STRING_AGG (employees.firstname ',') members FROM teams t INNER JOIN member m ON t.id=m.id_team INNER JOIN employees e ON m.id_employee=e.id GROUP BY t.id", []
       //"SELECT t.id as table, ROW_NUMBER () OVER (ORDER BY t.id) AS key, STRING_AGG (e.firstname || ' ' ||e.lastname, ',') members, STRING_AGG (e.id::varchar(255), ',') member_ids FROM teams t LEFT JOIN member m ON t.id=m.id_team LEFT JOIN employees e ON m.id_employee=e.id WHERE e.role='nurse' GROUP BY t.id ORDER BY t.id", []
-    "select id_team as key, STRING_AGG(name, ',') members, STRING_AGG(id_nurse::varchar(255), ',') member_ids from (SELECT distinct(concat(c.firstname, ' ', c.lastname)) as name, id as id_team, id_nurse from (select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join (select * from member WHERE ($1<= EXTRACT(YEAR FROM mem_from) AND $2<= EXTRACT(MONTH FROM mem_from)) OR ($3>= EXTRACT(YEAR FROM mem_to) AND $4>= EXTRACT(MONTH FROM mem_to))) as m on t.id=m.id_team left join employees e on m.id_employee=e.id GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to) as c order by id)as q GROUP BY q.id_team", [year, month, year, month]
+    "select id_team as key, STRING_AGG(name, ',') memberslist, STRING_AGG(id_nurse::varchar(255), ',') members from (SELECT distinct(concat(c.firstname, ' ', c.lastname)) as name, id as id_team, id_nurse from (select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join (select * from member WHERE ($1<= EXTRACT(YEAR FROM mem_from) AND $2<= EXTRACT(MONTH FROM mem_from)) OR ($3>= EXTRACT(YEAR FROM mem_to) AND $4>= EXTRACT(MONTH FROM mem_to))) as m on t.id=m.id_team left join employees e on m.id_employee=e.id GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to) as c order by id)as q GROUP BY q.id_team", [year, month, year, month]
     );
     //select id_team as key, STRING_AGG(name, ',') members, STRING_AGG(id_nurse::varchar(255), ',') member_ids from (SELECT distinct(concat(c.firstname, ' ', c.lastname)) as name, id as id_team, id_nurse from (select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join member m on t.id=m.id_team left join employees e on m.id_employee=e.id WHERE (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')<= EXTRACT(YEAR FROM m.mem_from) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')<= EXTRACT(MONTH FROM m.mem_from)) OR (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')>= EXTRACT(YEAR FROM m.mem_to) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')>= EXTRACT(MONTH FROM m.mem_to)) GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to) as c order by id)as q GROUP BY q.id_team
     //select t.id, ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.id as id_nurse, e.firstname, e.lastname, m.mem_from, m.mem_to from teams t left join (select * from member (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')<= EXTRACT(YEAR FROM m.mem_from) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')<= EXTRACT(MONTH FROM m.mem_from)) OR (EXTRACT(YEAR FROM TIMESTAMP '2022-04-11')>= EXTRACT(YEAR FROM m.mem_to) AND EXTRACT(MONTH FROM TIMESTAMP '2022-04-11')>= EXTRACT(MONTH FROM m.mem_to))) m on t.id=m.id_team left join employees e on m.id_employee=e.id GROUP BY t.id, e.id, e.firstname, e.lastname, m.mem_from, m.mem_to
@@ -50,28 +50,28 @@ async function getClients() {
     let arr=null
     let arr2=null
     for (let i = 0; i < data.length; i++) {
-      if(data[i].members!==null){
-        if(data[i].members===' '){
-          data[i].members=[]
+      if(data[i].memberslist!==null){
+        if(data[i].memberslist===' '){
+          data[i].memberslist=[]
           //continue //?
         }else{
-          arr = data[i].members.split(',');
-        data[i].members=[...arr]
+          arr = data[i].memberslist.split(',');
+        data[i].memberslist=[...arr]
         }
         //arr = data[i].members.split(',');
         //data[i].members=[...arr]
         // arr2 = data[i].member_ids.split(',');
         // data[i].member_ids=[...arr2]
       }else{
-        data[i].members=[]
+        data[i].memberslist=[]
         //data[i].member_ids=[]
       }
-      if(data[i].member_ids!==null){
-        arr2 = data[i].member_ids.split(',');
-        data[i].member_ids=[...arr2]
+      if(data[i].members!==null){
+        arr2 = data[i].members.split(',');
+        data[i].members=[...arr2]
       }else{
         //data[i].members=[]
-        data[i].member_ids=[]
+        data[i].members=[]
       }
 
     }
@@ -273,47 +273,53 @@ async function getClients() {
   //     return data
   //   }
 
-  // async function newTeam(members, patients) { //doriesit co sa bude vracat
-  //   console.log(diagnosis, diagnosis.length)
-  //     const data = await db.query(
-  //       'INSERT INTO teams(date_from) VALUES(CURRENT_TIMESTAMP) RETURNING id', []
-  //     );
-  //     // console.log(data, data[0].id)
-  //     let data2 = null //prerobit na pole
-  //     for (let i = 0; i < members.length; i++) {
-  //     data2 = await db.query(
-  //       'INSERT INTO member(id_employee, id_team) VALUES($1) RETURNING *', [members[i], data[0].id]
-  //     );
-  //     }
+  async function newTeam(members) { //doriesit co sa bude vracat
+    //console.log(diagnosis, diagnosis.length)
+      const data = await db.query(
+        'INSERT INTO teams(name, team_from) VALUES($1, CURRENT_TIMESTAMP) RETURNING id', ['asd']
+      );
+      // console.log(data, data[0].id)
+      let data2 = null //prerobit na pole
+      for (let i = 0; i < members.length; i++) {
+      data2 = await db.query(
+        'INSERT INTO member(id_employee, id_team) VALUES($1, $2) RETURNING *', [members[i], data[0].id]
+      );
+      }
 
-  //     let data3 = null //prerobit na pole
-  //     for (let i = 0; i < patients.length; i++) {
-  //       data3 = await db.query(
-  //         'INSERT INTO patient(id_client, id_team) VALUES($1) RETURNING *', [patients[i], data[0].id]
-  //       );
-  //       }
-  //     return data2
-  //   }
+      // let data3 = null //prerobit na pole
+      // for (let i = 0; i < patients.length; i++) {
+      //   data3 = await db.query(
+      //     'INSERT INTO patient(id_client, id_team) VALUES($1) RETURNING *', [patients[i], data[0].id]
+      //   );
+      //   }
+      return data2
+    }
 
-    // async function editTeam(id, members) { //doriesit co sa bude vracat
-    //     console.log(diagnosis, diagnosis.length)
-    //       const data = await db.query(
-    //         'INSERT INTO clients(firstname, lastname, address) VALUES($1, $2, $3) RETURNING id', [firstname, lastname, address]
-    //       );
-    //       // console.log(data, data[0].id)
-    //       let data2 = null
-    //       for (let i = 0; i < diagnosis.length; i++) {
-    //       data2 = await db.query(
-    //         'INSERT INTO diagnosis_reports(id_diagnosis, id_client) VALUES($1, $2) RETURNING *', [diagnosis[i], data[0].id]
-    //       );
-    //       }
-    //       return data2
-    //     }
+    async function editTeam(id, members) { //doriesit co sa bude vracat
+        // console.log(diagnosis, diagnosis.length)
+        //   const data = await db.query(
+        //     'INSERT INTO clients(firstname, lastname, address) VALUES($1, $2, $3) RETURNING id', [firstname, lastname, address]
+        //   );
+          // console.log(data, data[0].id)
+
+          const deletemem = await db.query(
+            'DELETE FROM member WHERE id_employee=$1', [BigInt(id)]
+          );
+
+          let data2 = null
+          for (let i = 0; i < members.length; i++) {
+            console.log('vypisujem membera pri editovani', members[i], "timu", id)
+          data2 = await db.query(
+            'INSERT INTO member(id_employee, id_team) VALUES($1, $2) RETURNING *', [BigInt(members[i]), BigInt(id)]
+          );
+          }
+          return data2
+        }
 
         async function deleteTeam(id) { //doriesit co sa bude vracat
           //console.log(diagnosis, diagnosis.length)
             const data = await db.query(
-              'DELETE FROM teams WHERE id=$1', [id]
+              'DELETE FROM teams WHERE id=$1', [BigInt(id)]
             );
             // console.log(data, data[0].id)
             const data2 = await db.query(
@@ -339,7 +345,7 @@ async function getClients() {
     editPatient,
     deletePatient,
     addTeam,
-    //newTeam,
-    //editTeam,
+    newTeam,
+    editTeam,
     deleteTeam
   }

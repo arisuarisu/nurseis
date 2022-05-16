@@ -14,6 +14,13 @@ import {
     editClient,
     deleteClient
   } from '../pages/clientsSlice';
+  import {
+    fetchDiagnosis,
+    selectDiagnosis,
+    // selectLoading,
+    // newDiagnosis,
+    // editDiagnosis
+  } from '../pages/diagnosisSlice';
 
 import { CSVLink } from "react-csv";
 const { Option } = Select;
@@ -63,7 +70,7 @@ const EditableCell = ({
       >
         {diagnoseslist.map(option => {
           return(
-        <Option value={option}>{option}</Option>)
+        <Option value={option.name}>{option.name}</Option>)
          })} 
       </Select>
         </Form.Item>
@@ -123,8 +130,16 @@ export function EditableClients () {
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
   const [selectArray, setSelectArray] = useState([]);
-  const diagnoseslist = ['ostheoporosis', 'anemia', 'lying patient']
-
+  const [diagnoseslist, setDiagnoseslist] = useState([]);
+  const diagnoses = useSelector(selectDiagnosis);
+  //const diagnoseslist = ['ostheoporosis', 'anemia', 'lying patient']
+  //const diagnoseslist = diagnoses.filter(diagnosis => diagnosis.name)
+  //let diagnoseslist2 = []
+  // for(let i; i<diagnoses.length; i++){
+  //   console.log('vypisujem diagnosis name', diagnoses[i].name)
+  //   diagnoseslist.push(diagnoses[i].name)
+  // }
+  console.log('vypisujem diagnoseslist', diagnoseslist)
   const emptyclient = [{key: '0', firstname: '', lastname: '', address: '', editable: true}]
 
   const headers_clients = [
@@ -168,6 +183,7 @@ export function EditableClients () {
 
   useEffect(() => {
     dispatch(fetchClients())
+    dispatch(fetchDiagnosis())
         },[dispatch]);
 
         useEffect(() => {
@@ -175,6 +191,18 @@ export function EditableClients () {
           //props.rerender()
           setData(datadata)
               },[datadata]);
+
+              useEffect(() => {
+                // console.log('vypisujem diagnoses', diagnoses)
+                // let diagnoseslist2 = []
+                // for(let i; i<diagnoses.length; i++){
+                //   console.log('vypisujem diagnosis name', diagnoses[i].name)
+                //   diagnoseslist2.push(diagnoses[i].name)
+                // }
+                // console.log(diagnoseslist2, 'vypiusuejm diagnosislist2')
+                // setDiagnoseslist([...diagnoseslist2])
+                setDiagnoseslist([...diagnoses])
+                    },[diagnoses]);      
 
               useEffect(() => {
                 console.log('new was clicked')
@@ -209,8 +237,12 @@ export function EditableClients () {
     // if(editingKey==='0'){
     //   cancelnew()
     // }
-    //console.log('vypisujem id deletujuceho klienta', record.key)
-    dispatch(deleteClient(editingKey))
+    //console.log('vypisujem id deletujuceho klienta', editingKey)
+    dispatch(deleteClient({id: editingKey}))
+    console.log('vypisujem editing key preed nulnutim v delete', editingKey)
+    setEditingKey('');
+    dispatch(fetchClients())
+    console.log('vypisujem editing key po nulnuti v delete', editingKey)
     //setEditingKey('');
   };
 
@@ -223,7 +255,9 @@ export function EditableClients () {
       if(key==='0'){
         console.log('dispatching new client with values', row.firstname, row.lastname, row.address, row.diagnosis)
         dispatch(newClient({firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: row.diagnosis}))
-        }
+        //dispatch(fetchClients())
+        data.slice(0, 1)  
+      }
         else{
           console.log('dispatching edit client with values', key, row.firstname, row.lastname, row.address, row.diagnosis)
         dispatch(editClient({id: key, firstname: row.firstname, lastname: row.lastname, address: row.address, diagnosis: row.diagnosis}))
@@ -249,6 +283,7 @@ export function EditableClients () {
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
+    dispatch(fetchClients())
   };
 
   const columns_clients = [

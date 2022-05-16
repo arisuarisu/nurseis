@@ -91,7 +91,7 @@ if(dataIndex==='nurse'){
       ) : (
     
       <>
-        <Tag>{record.nurse}</Tag>
+        {record.nurse}
          </>)}
     
     
@@ -132,7 +132,7 @@ else if(dataIndex==='client'){
       ) : (
     
       <>
-      <Tag>{record.client}</Tag>
+    {record.client}
          </>)}
           </td>
   )
@@ -141,7 +141,7 @@ else if(dataIndex==='pat_from'){
   return(
   <td {...restProps}>
     {editing ? (
-    <DatePicker selected={moment(record.pat_from)} onChange={setPatFrom} />
+    <DatePicker defaultValue={moment(record.pat_from, 'YYYY-MM-DD')} onChange={setPatFrom} />
       ) : (
     
       <>
@@ -154,7 +154,7 @@ else if(dataIndex==='pat_to'){
   return(
   <td {...restProps}>
     {editing ? (
-    <DatePicker selected={moment(record.pat_to)} onChange={setPatTo} />
+    <DatePicker defaultValue={moment(record.pat_to, 'YYYY-MM-DD')} onChange={setPatTo} />
       ) : (
     
       <>
@@ -261,10 +261,23 @@ export function EditableTeam (props) {
     setDatePickTo(value.format('YYYY-MM-DD'))
   }
 
+  const chooseTeam = value =>{
+    selectedTeam(value)
+  }
+
   const title = () => {
     return(
       <Row justify="space-between" align="middle">
-        <Col>Team {selectedTeam}</Col>
+        {/* <Col>Team {selectedTeam}</Col> */}
+        <Col>
+          <Select defaultValue="lucy" style={{ width: 120 }} onChange={chooseTeam}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>
+              Disabled
+            </Option>
+          </Select>
+      </Col>
         <Col>
         <DatePicker onChange={onDateSelect} picker="month" />
             <Button type="primary" onClick={addnew} disabled={newclient} >Add shift</Button> 

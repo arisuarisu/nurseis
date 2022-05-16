@@ -106,26 +106,26 @@ export function ManagingTeams() {
 
           {/* CONTENT */}
 
-          <Row>
+          {/* <Row> */}
           {/* {TeamTable===0 ?
           <EditableTeams manage={manage}/> :  */}
-            <EditableTeams manage={manage}/>
-            <EditableTeam manage={setZero} order={TeamTable}/>
+            {/* <EditableTeams manage={manage}/>
+            <EditableTeam manage={setZero} order={TeamTable}/> */}
           {/* }   */}
-          </Row>
+          {/* </Row> */}
 
-          {/* <div className="card-container">
+          <div className="card-container">
     <Tabs type="card">
-      <TabPane tab="Managing team members" key="1">
+      <TabPane tab="Team members" key="1">
       
-      <NestedTeams />
+      <EditableTeams />
       </TabPane>
-      <TabPane tab="Managing clients in teams" key="2">
-      <NestedTeams />
+      <TabPane tab="Shifts" key="2">
+      <EditableTeam />
       
       </TabPane>
     </Tabs>
-  </div> */}
+  </div>
 
           {/* END OF CONTENT */}
 

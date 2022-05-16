@@ -17,7 +17,12 @@ export const fetchEmployees = createAsyncThunk('employees/getemployees', async (
     const res = await axios.post("/employees/new", {
       firstname: employee.firstname,
       lastname: employee.lastname,
-      //img: employee.img
+      phone: employee.phone,
+      //img: employee.img,
+      contractf: employee.contractf, 
+      contractt: employee.contractt, 
+      gdpr: employee.gdpr, 
+      vaccine: employee.vaccine,
     }).then(res => res.data)
     dispatch(fetchEmployees())
     return res;
@@ -37,7 +42,12 @@ export const fetchEmployees = createAsyncThunk('employees/getemployees', async (
         id: employee.id,
         firstname: employee.firstname,
         lastname: employee.lastname,
-        //img: client.img
+        phone: employee.phone,
+        //img: client.img,
+        contractf: employee.contractf, 
+      contractt: employee.contractt, 
+      gdpr: employee.gdpr, 
+      vaccine: employee.vaccine,
       }).then(res => res.data)
       dispatch(fetchEmployees())
       return res;

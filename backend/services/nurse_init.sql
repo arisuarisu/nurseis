@@ -28,12 +28,26 @@ CREATE TABLE employees (
     img VARCHAR(100) NULL,
     role VARCHAR(30) NOT NULL,
     check(role in ('admin', 'nurse')),
-    emp_from timestamp DEFAULT CURRENT_TIMESTAMP::date NOT NULL,
-    emp_to timestamp
+    --emp_from timestamp DEFAULT CURRENT_TIMESTAMP::date NOT NULL,
+    --emp_to timestamp
+    phone VARCHAR(20) NOT NULL,
+    contractf VARCHAR(10) NOT NULL, 
+    contractt VARCHAR(10), 
+    gdpr VARCHAR(3) NOT NULL, 
+    check(gdpr in ('yes', 'no')),
+    vaccine VARCHAR(3) NOT NULL, 
+    check(vaccine in ('yes', 'no'))
 );
 
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('bakabaka', 'alic', 'baka', 'admin');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('patutu', 'pato', 'pato', 'admin');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('bakabaka', 'alic', 'baka', 'admin', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('patutu', 'pato', 'pato', 'admin', '0902123456', '2022-04-05', '', 'no', 'no');
+
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('asdfasd', 'Zuzana', 'Kováčová', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('pasdasdskgjl', 'Natália', 'Červená', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('asdlkjlk', 'Pavol', 'Majeský', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('ljlkajsdasd', 'Beáta', 'Horváthová', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('adasdau', 'Lucia', 'Biela', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
+INSERT INTO employees(password, firstname, lastname, role, phone, contractf, contractt, vaccine, gdpr) VALUES ('pasdasdu', 'Lukáš', 'Bielik', 'nurse', '0902123456', '2022-04-05', '', 'no', 'no');
 
 CREATE SEQUENCE attendance_reports_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 
@@ -197,9 +211,9 @@ INSERT INTO health_reports(id_clients, id_employee, description) VALUES (2, 2, '
 --                         {key: '4', firstname: 'Beata', lastname: 'Horvatova', arrival: '7:58:40', lunch_from: '12:02:12', lunch_to:  '12:31:54', departure:  '16:12:03', holiday: false, sickleave: false},
 --                         {key: '5', firstname: 'Lucia', lastname: 'Biela', arrival: '7:52:33', lunch_from: '12:03:06', lunch_to:  '12:32:01', departure:  '16:05:07', holiday: false, sickleave: false},
 --                         {key: '6', firstname: 'Lukas', lastname: 'Bielik', arrival: '7:57:21', lunch_from: '11:58:56', lunch_to:  '12:27:35', departure:  '16:20:36', holiday: false, sickleave: false},
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('asdfasd', 'Zuzana', 'Kováčová', 'nurse');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('pasdasdskgjl', 'Natália', 'Červená', 'nurse');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('asdlkjlk', 'Pavol', 'Majeský', 'nurse');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('ljlkajsdasd', 'Beáta', 'Horváthová', 'nurse');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('adasdau', 'Lucia', 'Biela', 'nurse');
-INSERT INTO employees(password, firstname, lastname, role) VALUES ('pasdasdu', 'Lukáš', 'Bielik', 'nurse');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('asdfasd', 'Zuzana', 'Kováčová', 'nurse', '2022-04-05', '', 'no', 'no');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('pasdasdskgjl', 'Natália', 'Červená', 'nurse', '2022-04-05', '', 'no', 'no');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('asdlkjlk', 'Pavol', 'Majeský', 'nurse', '2022-04-05', '', 'no', 'no');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('ljlkajsdasd', 'Beáta', 'Horváthová', 'nurse', '2022-04-05', '', 'no', 'no');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('adasdau', 'Lucia', 'Biela', 'nurse', '2022-04-05', '', 'no', 'no');
+-- INSERT INTO employees(password, firstname, lastname, role, contractf, contractt, vaccine, gdpr) VALUES ('pasdasdu', 'Lukáš', 'Bielik', 'nurse', '2022-04-05', '', 'no', 'no');

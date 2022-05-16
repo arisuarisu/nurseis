@@ -20,23 +20,23 @@ async function getEmployees() {
 
   async function getNurses() {
     const data = await db.query(
-      'SELECT id AS key, firstname, lastname, img FROM employees WHERE role=$1 ORDER BY lastname', ['nurse']
+      'SELECT id AS key, firstname, lastname, phone, img, contractf, contractt, gdpr, vaccine FROM employees WHERE role=$1 ORDER BY lastname', ['nurse']
     );
     //const data = helper.emptyOrRows(rows);
     return data
   }
 
-  async function newEmployee(firstname, lastname) {
+  async function newEmployee(firstname, lastname, phone, contractf, contractt, gdpr, vaccine) {
       const data = await db.query(
-        'INSERT INTO employees(firstname, lastname, password, role) VALUES($1, $2, $3, $4) RETURNING *', [firstname, lastname, 'asdasd', 'nurse']
+        'INSERT INTO employees(firstname, lastname, password, role, phone, contractf, contractt, gdpr, vaccine) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', [firstname, lastname, 'asdasd', 'nurse', phone, contractf, contractt, gdpr, vaccine]
       );
       return data
     }
 
-    async function editEmployee(id, firstname, lastname) { //doriesit co sa bude vracat
+    async function editEmployee(id, firstname, lastname, phone, contractf, contractt, gdpr, vaccine) { //doriesit co sa bude vracat
       //console.log(diagnosis, diagnosis.length)
         const data = await db.query(
-          'UPDATE employees SET firstname=$1, lastname=$2 WHERE id=$3', [firstname, lastname, id]
+          'UPDATE employees SET firstname=$1, lastname=$2, phone=$3, contractf=$4, contractt=$5, gdpr=$6, vaccine=$7 WHERE id=$8', [firstname, lastname, phone, contractf, contractt, gdpr, vaccine, BigInt(id)]
         );
 
         return data

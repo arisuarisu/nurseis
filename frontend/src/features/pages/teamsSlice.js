@@ -89,7 +89,7 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
             const res = await axios.post("/teams/delete", {
                 id: team.id
             }).then(res => res.data)
-            dispatch(fetchTeamMembers())
+            //dispatch(fetchTeamMembers())
             return res;
             })
 

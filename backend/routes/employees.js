@@ -27,7 +27,7 @@ router.post('/new', verifySession(), async function(req, res, next) {
   try {
     //let id = req.session.getUserId();
     //console.log(req.body.datetime, " vypisujem arrival")
-    res.json(await employees.newEmployee(req.body.firstname, req.body.lastname));
+    res.json(await employees.newEmployee(req.body.firstname, req.body.lastname, req.body.phone, req.body.contractf, req.body.contractt, req.body.gdpr, req.body.vaccine));
   } catch (err) {
     console.error(`Error while writing a new employee`, err.message);
     next(err);
@@ -38,7 +38,7 @@ router.post('/edit', verifySession(), async function(req, res, next) {
   try {
     //let id = req.session.getUserId();
     //console.log(req.body.diagnosis, " vypisujem diagnozy z noveho clienta")
-    res.json(await employees.editEmployee(req.body.id, req.body.firstname, req.body.lastname));
+    res.json(await employees.editEmployee(req.body.id, req.body.firstname, req.body.lastname, req.body.phone, req.body.contractf, req.body.contractt, req.body.gdpr, req.body.vaccine));
   } catch (err) {
     console.error(`Error while editing an employee`, err.message);
     next(err);

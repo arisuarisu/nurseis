@@ -39,8 +39,13 @@ async function getClients() {
       let data2 = null
       if(diagnosis!==null){
       for (let i = 0; i < diagnosis.length; i++) {
+        
+        const diagnosis_id = await db.query( //skontrolovat ci existuje
+          'SELECT id FROM diagnosis WHERE name=$1', [diagnosis[i]]
+          );
+
       data2 = await db.query(
-        'INSERT INTO diagnosis_reports(id_diagnosis, id_client) VALUES($1, $2) RETURNING *', [diagnosis[i], data[0].id]
+        'INSERT INTO diagnosis_reports(id_diagnosis, id_employee, id_clients) VALUES($1, $2, $3) RETURNING *', [diagnosis_id[0].id, 1, data[0].id]
       );
       }
     }

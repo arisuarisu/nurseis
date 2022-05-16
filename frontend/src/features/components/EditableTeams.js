@@ -15,6 +15,13 @@ import {
     editTeam,
     deleteTeam
   } from '../pages/teamsSlice';
+  import {
+    fetchEmployees,
+    // newEmployee,
+    selectEmployees,
+    // editEmployee,
+    // deleteEmployee
+  } from '../pages/employeesSlice';
 
 import { CSVLink } from "react-csv";
 const { Option } = Select;
@@ -32,19 +39,25 @@ inputType,
 record,
 index,
 children,
+nurses,
 //deleteteam,
 //manage,
 ...restProps
 }) => {
 const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
 //console.log('vypisujem dataindex', props.record)
+
+const handleChange = (value) => {
+  console.log('vypisujem value v multiple select nurses in teams', value)
+}
+
 if(dataIndex==='members'){
-  console.log('vypisujem members editable cell record', record)
-  console.log('vypisujem members editable cell children', children)
+  //console.log('vypisujem members editable cell record', record)
+  //console.log('vypisujem members editable cell children', children)
   return (
     <td {...restProps}>
       {/* {console.log('vypisujem record vovnutri', record)} */}
-    {/* {editing ? (
+    {editing ? (
       <Form.Item
         name={dataIndex}
         style={{
@@ -62,46 +75,36 @@ if(dataIndex==='members'){
       placeholder="Select members"
       //defaultValue={record.diagnosis} //array expected
       //defaultValue={members}
+      onChange={handleChange}
       defaultValue={children[1]}
       style={{ width: '100%' }}
     >
-      {children[1].map(option => {
+      {nurses.map(option => {
         return(
-      <Option value={option}>{option}</Option>)
+      <Option value={option.key}>{option.firstname+' '+option.lastname}</Option>)
        })} 
     </Select>
       </Form.Item>
-      ) : ( */}
+      ) : (
     
       <>
       {record.members.map(option => {
       // data[record.key].map(option => {
+        console.log('vypisujem option v members non editing', option)
+        console.log('vypisujem NURSES', nurses)
+        const member=nurses.filter(nurse => nurse.key === option)
+        console.log('vypisujem member objekt', member)
+        if(member[0]===undefined){
+          return (<></>);
+        }else{
         return(
-        <Tag>{option}</Tag>)
-         })} 
+        <Tag>{member[0].firstname+' '+member[0].lastname}</Tag>
+         );
+        } })}
          </>
-    
+      )}
     
   </td>
-  )
-}
-else if(dataIndex==='operation'){
-  return(
-    <td {...restProps}>
-  <span>
-            <Popconfirm title="Sure to delete?" >
-              <a>Delete</a>
-            </Popconfirm>
-            <Typography.Link
-              
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Manage
-            </Typography.Link>
-          </span>
-          </td>
   )
 }
 else{
@@ -127,7 +130,7 @@ return (
     )}
   </td>
 );}
-};
+    };
 
 export function EditableTeams (props) {
     const dispatch = useDispatch();
@@ -148,6 +151,8 @@ export function EditableTeams (props) {
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
   const [selectedDate, setSelectedDate] = useState(today);
+  const nurseslist = useSelector(selectEmployees)
+  const [nurses, setNurses] = useState([]);
 
   const emptyteam = [{key: '0', team: '', members: [], editable: true}]
 
@@ -177,8 +182,8 @@ export function EditableTeams (props) {
       <Row justify="space-between" align="middle">
         <Col>Teams</Col>
         <Col>
-        <DatePicker onChange={onDateSelect} picker="month" />
-            <Button type="primary" onClick={() => dispatch(addTeam({name: 'asdasd'}))} >Add team</Button> 
+        {/* <DatePicker onChange={onDateSelect} picker="month" /> */}
+            <Button type="primary" onClick={addnew} disabled={newclient}>Add team</Button> 
         </Col>
       </Row>
     )
@@ -194,7 +199,12 @@ export function EditableTeams (props) {
 
   useEffect(() => {
     dispatch(fetchTeamMembers({year: selectedDate[0], month: selectedDate[1]}))
+    dispatch(fetchEmployees())
         },[dispatch]);
+  
+        useEffect(() => {
+          setNurses([...nurseslist])
+              },[nurseslist]);
 
         useEffect(() => {
           console.log('vypisujem data zo stavu po rendernuti useeffect', data)
@@ -228,6 +238,7 @@ export function EditableTeams (props) {
   };
 
   const deleteteam = (record) => {
+    console.log('vypisujem deletovaci team record.key', record.key)
     dispatch(deleteTeam({id: record.key}))
   };
 
@@ -235,13 +246,13 @@ export function EditableTeams (props) {
     try {
       const row = await form.validateFields();
       console.log('vypisujem ROW: ', row)
-      console.log('vypisujem key v save', key, typeof(key))
-      // if(key==='0'){
-      //   dispatch(newTeam({members: row.members}))
-      // }
-      // else{
-      // dispatch(editTeam({id: key, members: row.members}))
-      // }
+      //console.log('vypisujem key v save', key, typeof(key))
+      if(key==='0'){
+        dispatch(newTeam({members: row.members}))
+      }
+      else{
+      dispatch(editTeam({id: key, members: row.members}))
+      }
       
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -275,101 +286,39 @@ export function EditableTeams (props) {
       dataIndex: 'members',
       width: '70%',
       editable: true,
-      // render: (members, record) => {
-      //   const editable = isEditing(record);
-          
-      //   if(editable===true){
-      //     return(
-      //     <Form.Item
-      //     name="select-multiple"
-      //     rules={[
-      //       {
-      //         required: true,
-      //         message: 'Please select clients members',
-      //         type: 'array',
-      //       },
-      //     ]}
-      //   >
-      //     <Select
-      //   mode="multiple"
-      //   placeholder="Select members"
-      //   //defaultValue={record.diagnosis} //array expected
-      //   //defaultValue={members}
-      //   defaultValue={members}
-      //   style={{ width: '100%' }}
-      // >
-      //   {/* {record.diagnosis.map(diagnosis => { */}
-      //   {/* <Option value={diagnosis}>{diagnosis}</Option> */}
-      //   <Option value='blabla'>blabla</Option>
-      //   <Option value='blablac'>blablac</Option>
-      //   {/* })} */}
-      // </Select>
-      // </Form.Item>
-      //   )}else{
-      //   // (
-      //       // <>
-      //       //console.log(record)
-      //       {/* {members} */}
-      //       {['member1', 'member2'].map(tag => {
-      //         return(
-      //       <Tag>{tag}</Tag>)
-      //       })}
-      //       // </>
-      //   // );
-      //     }
-      // },
-      render: (_, record) => (
-        
-        <>
-      {console.log(record, "vypisujem record")}
-      {record.members.map(option => {
-      // data[record.key].map(option => {
-        return(
-        <Tag>{option}</Tag>)
-         })} 
-         </>
-
-          // {data[record.key].members.map(tag => {
-          //   let color = tag.length > 5 ? 'geekblue' : 'green';
-          //   if (tag === 'loser') {
-          //     color = 'volcano';
-          //   }
-          //   return (
-          //     <Tag color={color} key={tag}>
-          //       {tag.toUpperCase()}
-          //     </Tag>
-          //   );
-          // })}
-        
-      ),
     },
     {
       title: 'Action',
       dataIndex: 'operation',
       width: '10%',
-      //render: record => {
        render: (_, record) => {
-        //const editable = isEditing(record);
-        return  (
+        const editable = isEditing(record);
+        return editable? (
           <span>
-            {/* <Popconfirm title="Sure to delete?" onConfirm={() => deleteteam(record.key)}>
-              <a>Delete</a>
-            </Popconfirm> */}
             <Typography.Link
-              onClick={() => props.manage(record.key)}
+              onClick={() => save(record.key)}
               style={{
                 marginRight: 8,
               }}
             >
-              Manage
+              Save
             </Typography.Link>
-          </span>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+              <a>Cancel</a>
+            </Popconfirm>
+            {/* <Popconfirm title="Sure to delete?" onConfirm={deleteteam(record)}>
+          <a>Delete</a>
+        </Popconfirm> */}
+        <Typography.Link onClick={() => deleteteam(record)}>
+            Delete
+          </Typography.Link>
+        </span>
         ) 
-        // : (
-        //   <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-        //     Edit
-        //   </Typography.Link>
-        // );
+        : (
+          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+            Edit
+          </Typography.Link>
+        );
       },
     },
   ];
@@ -387,6 +336,7 @@ export function EditableTeams (props) {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        nurses: nurses
         //deleteteam: deleteteam,
         //manage: props.manage
       }),
