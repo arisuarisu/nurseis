@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { EdiTable } from '../components/EdiTable';
 import { Organizer } from '../components/Organizer';
+import { Organizer2 } from '../components/Organizer2';
 import { Navigation } from '../layout/Navigation';
 import { Navbar2 } from '../navbar/Navbar2';
 import {
@@ -176,7 +177,8 @@ export function Teams() {
                     
                     {/* <Calendar dateCellRender={dateCellRender} mode='month' defaultValue={moment('2022-04-25')} headerRender={calendartitle} style={{position: 'relative', bottom: 44,  zIndex: 1}}/> */}
                     {/* style={{listStyle: 'none'}} */}
-                    <Organizer style={{width: '100%'}}/>
+                    {/* <Organizer style={{width: '100%'}}/> */}
+                    <Organizer2 style={{width: '100%'}}/>
                 </Card>
             </Col>
           </Row>

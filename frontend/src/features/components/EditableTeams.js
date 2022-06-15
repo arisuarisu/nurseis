@@ -55,7 +55,7 @@ if(dataIndex==='members'){
   //console.log('vypisujem members editable cell record', record)
   //console.log('vypisujem members editable cell children', children)
   return (
-    <td {...restProps}>
+    <td {...restProps} >
       {/* {console.log('vypisujem record vovnutri', record)} */}
     {editing ? (
       <Form.Item
@@ -287,6 +287,20 @@ export function EditableTeams (props) {
       width: '70%',
       editable: true,
     },
+    // {
+    //   title: 'BAkaloca',
+    //   dataIndex: 'members',
+    //   width: '10%',
+    //   editable: false,
+    //   render(text, record) {
+    //     return {
+    //       props: {
+    //         style: { background: '#bac2bc'}//parseInt(text) > 50 ? "red" : "green" }
+    //       },
+    //       children: <div>{text}</div>
+    //     };
+    //   }
+    // },
     {
       title: 'Action',
       dataIndex: 'operation',

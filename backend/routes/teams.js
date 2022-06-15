@@ -14,6 +14,18 @@ const teams = require('../services/teams');
 //   }
 // });
 
+router.get('/count', verifySession(), async function(req, res, next) {
+  try {
+    // console.log(res.body.firstname, "vypisujem klientov")
+    //console.log(await teams.getTeams())
+    res.json(await teams.getTeamCount());
+    console.log('TEAM COUNT ROUTE')
+  } catch (err) {
+    console.error(`Error while getting team count`, err.message);
+    next(err);
+  }
+});
+
 router.get('/nursenames', verifySession(), async function(req, res, next) {
   try {
     // console.log(res.body.firstname, "vypisujem klientov")
@@ -164,9 +176,9 @@ router.post('/edit', verifySession(), async function(req, res, next) {
     try {
       //let id = req.session.getUserId();
       //console.log(req.body.diagnosis, " vypisujem diagnozy z noveho clienta")
-      res.json(await teams.addPatient(req.body.id_nurse, req.body.id_client, req.body.pat_from, req.body.pat_to));
+      res.json(await teams.addPatient(req.body.id_nurse, req.body.id_client, req.body.pat_range, req.body.time_from, req.body.time_to, req.body.shift));
     } catch (err) {
-      console.error(`Error while adding a member`, err.message);
+      console.error(`Error while adding a patient`, err.message);
       next(err);
     }
   });
@@ -175,7 +187,7 @@ router.post('/edit', verifySession(), async function(req, res, next) {
     try {
       //let id = req.session.getUserId();
       //console.log(req.body.diagnosis, " vypisujem diagnozy z noveho clienta")
-      res.json(await teams.editPatient(req.body.id, req.body.id_nurse, req.body.id_client, req.body.pat_from, req.body.pat_to));
+      res.json(await teams.editPatient(req.body.id, req.body.id_nurse, req.body.id_client, req.body.pat_date, req.body.time_from, req.body.time_to, req.body.shift));
     } catch (err) {
       console.error(`Error while editing a patient`, err.message);
       next(err);

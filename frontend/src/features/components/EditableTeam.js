@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Tag, Row, Col, Button, Avatar, DatePicker } from 'antd';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Select, Tag, Row, Col, Button, Avatar, DatePicker, TimePicker } from 'antd';
 import { PropertySafetyFilled, UserOutlined } from '@ant-design/icons';
 import { LoadingTable } from './LoadingTable';
 import {
@@ -17,12 +17,15 @@ import {
     selectPatients,
     addPatient,
     editPatient,
-    deletePatient
+    deletePatient,
+    fetchTeamCount,
+    selectTeamCount
   } from '../pages/teamsSlice';
 
 import { CSVLink } from "react-csv";
 import moment from 'moment';
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const headers_teams = [
   { label: "Teams", key: "teams" },
@@ -45,6 +48,8 @@ nurses,
 clients,
 setPatFrom,
 setPatTo,
+setPatRange,
+setPatDate,
 ...restProps
 }) => {
 const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -125,7 +130,7 @@ else if(dataIndex==='client'){
     >
       {clients.map(option => {
         return(
-      <Option value={option.id}>{option.nurse}</Option>)
+      <Option value={option.id}>{option.firstname+' '+option.lastname}</Option>)
        })} 
     </Select>
       </Form.Item>
@@ -137,29 +142,98 @@ else if(dataIndex==='client'){
           </td>
   )
 }
-else if(dataIndex==='pat_from'){
+else if(dataIndex==='time_from'){
+  console.log("index je", index, record.id)
   return(
   <td {...restProps}>
-    {editing ? (
-    <DatePicker defaultValue={moment(record.pat_from, 'YYYY-MM-DD')} onChange={setPatFrom} />
-      ) : (
-    
-      <>
-      {record.pat_from}
-         </>)}
+    {!editing ? (
+    <>
+    {record.time_from}
+       </>) : record.id===undefined ?
+       //1===1 ?
+  (
+        <TimePicker onChange={setPatFrom} />
+          ) :
+          (
+            <TimePicker defaultValue={moment(record.time_from, 'hh-mm-ss')} onChange={setPatFrom} />
+              )
+         }
           </td>
   )
 }
-else if(dataIndex==='pat_to'){
+else if(dataIndex==='time_to'){
+  return(
+  <td {...restProps}>
+    {!editing ? (
+    <>
+    {record.time_to}
+       </>) : record.id===undefined ?
+       //1===1 ?
+  (
+        <TimePicker onChange={setPatTo} />
+          ) :
+          (
+            <TimePicker defaultValue={moment(record.time_to, 'hh-mm-ss')} onChange={setPatTo} />
+              )
+         }
+          </td>
+  )
+}
+else if(dataIndex==='pat_date'){
+  return(
+  <td {...restProps}>
+         {!editing ? (
+    <>
+    {record.pat_date}
+       </>) : record.id===undefined ?
+       //1===1 ?
+  (
+        <RangePicker onChange={setPatRange} /> //(value)=>{console.log('RANGEPICKER CHangeD', value[0].format('YYYY-MM-DD'), value[1].format('YYYY-MM-DD'))}} />//{setPatDate} />
+          ) :
+          (
+            <DatePicker defaultValue={moment(record.pat_date, 'YYYY-MM-DD')} onChange={setPatDate} />
+              )
+         }
+          </td>
+  )
+}
+else if(dataIndex==='shift'){
   return(
   <td {...restProps}>
     {editing ? (
-    <DatePicker defaultValue={moment(record.pat_to, 'YYYY-MM-DD')} onChange={setPatTo} />
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: false,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+           <Select
+        //mode="multiple"
+        allowClear
+        placeholder="Select shift type"
+        //defaultValue={record.diagnosis} //array expected
+        //defaultValue={members}
+        initialValues={children[1]}
+        style={{ width: '100%' }}
+        //onChange={selectChange}
+      >
+        
+        <Option value='d'>day</Option>
+        <Option value='n'>night</Option>
+      </Select>
+        </Form.Item>
       ) : (
-    
-      <>
-      {record.pat_to}
-         </>)}
+        <>
+        {children}
+           
+           </>
+      )}
           </td>
   )
 }
@@ -212,14 +286,18 @@ export function EditableTeam (props) {
   //const data = useSelector(selectClients);
   const [editingKey, setEditingKey] = useState('');
   const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedTeam, setSelectedTeam] = useState('1');
-  const [datePickFrom, setDatePickFrom] = useState(today);
-  const [datePickTo, setDatePickTo] = useState(today);
+  const [selectedTeam, setSelectedTeam] = useState('0');
+  const [datePickFrom, setDatePickFrom] = useState('');//useState(today);
+  const [datePickTo, setDatePickTo] = useState('');//useState(today);
+  const [patientDate, setPatientDate] = useState('');
+  const [patientRange, setPatientRange] = useState([]);
+  const [tcount, setTcount] = useState(0);
+  let teamcount = useSelector(selectTeamCount);
 
   //const nurses=['Pavol Majesky', 'Zuzana Kovacova', 'Antonia Milatova']
   //const clients=['Rastislav Novomesky', 'Linda Bezakova', 'Oto White']
 
-  const emptyteam = [{key: '0', nurse: '', client: '', pat_from: '', pat_to: '', editable: true}]
+  const emptyteam = [{key: '0', nurse: '', client: '', shift: '', editable: true}]
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -235,6 +313,11 @@ export function EditableTeam (props) {
     } 
             },[selectedDate]);
 
+            useEffect(() => {
+                  setTcount(parseInt(teamcount, 10)) 
+                  console.log('vypisujem teamcount a typ', teamcount, typeof(tcount))
+                      },[teamcount]);
+
   function onDateSelect(_, dateString) {
     //console.log(date, dateString);
     const date=dateString.split("-");
@@ -242,40 +325,64 @@ export function EditableTeam (props) {
     console.log(selectedDate, 'vypisujem selected date');
   }
 
-  function onDatePickFrom(_, dateString){
-    const date=dateString.split("-");
-    setDatePickFrom(date)
-  }
+  // function onDatePickFrom(_, dateString){
+  //   const date=dateString.split("-");
+  //   setDatePickFrom(date)
+  // }
 
-  function onDatePickTo(_, dateString){
-    const date=dateString.split("-");
-    setDatePickTo(date)
-  }
+  // function onDatePickTo(_, dateString){
+  //   const date=dateString.split("-");
+  //   setDatePickTo(date)
+  // }
 
   const setPatFrom = value => {
-    setDatePickFrom(value.format('YYYY-MM-DD'))
-    //console.log(value.format('YYYY-MM-DD'), "VYPISUJEM DATEPICKFROM")
+    setDatePickFrom(value.format('hh:mm:ss'))
+    console.log(value.format('hh:mm:ss'), "VYPISUJEM DATEPICKFROM")
   }
 
   const setPatTo = value => {
-    setDatePickTo(value.format('YYYY-MM-DD'))
+    console.log(value.format('hh:mm:ss'), "VYPISUJEM DATEPICKTO")
+    setDatePickTo(value.format('hh:mm:ss'))
+  }
+
+  const setPatDate = value => {
+    setPatientDate(value.format('YYYY-MM-DD'))
+  }
+
+  const setPatRange = value => {
+    setPatientRange([value[0].format('YYYY-MM-DD'), value[1].format('YYYY-MM-DD')])
+    console.log('vypisujem range', setPatientRange)
   }
 
   const chooseTeam = value =>{
-    selectedTeam(value)
+    console.log('TEAM CHANGE VALUE', value, typeof(value))
+    setSelectedTeam(value)
+    console.log('TEAM CHANGE TO', value, typeof(value))
   }
 
   const title = () => {
+    console.log("VYPISUJEM TITLE TCOUNT", tcount, typeof(tcount))
+    let optionlist = []
+    for(let j=0;j<=tcount;j++){
+      optionlist.push(j)
+      console.log("VYPISUJEM PORADIE TIMOV")
+    }
     return(
       <Row justify="space-between" align="middle">
         {/* <Col>Team {selectedTeam}</Col> */}
         <Col>
-          <Select defaultValue="lucy" style={{ width: 120 }} onChange={chooseTeam}>
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>
-              Disabled
-            </Option>
+          <Select defaultValue="All teams" style={{ width: 120 }} onChange={chooseTeam}>
+            {/* {optionlist} */}
+            {optionlist.map(option => {
+              if(option===0){
+                return(
+                  <Option value={option}>{'All teams'}</Option>
+                )
+              }
+              else{
+        return(
+      <Option value={option}>{'Team '+option}</Option>)}
+       })} 
           </Select>
       </Col>
         <Col>
@@ -296,8 +403,17 @@ export function EditableTeam (props) {
 
   useEffect(() => {
     dispatch(fetchTeamPatients({id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}))
-    dispatch(fetchNurses)
-    dispatch(fetchClients)
+    dispatch(fetchNurses())
+    dispatch(fetchClients())
+  },[dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchTeamPatients({id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}))
+  },[selectedTeam, selectedDate]);
+
+  useEffect(() => {
+    dispatch(fetchTeamCount())
+    console.log('fetching team count in ant')
   },[dispatch]);
 
         useEffect(() => {
@@ -308,8 +424,8 @@ export function EditableTeam (props) {
       
               useEffect(() => {
                 console.log('vypisujem new nursess names', nurses)
-                //setNurses(nur)
-                setNurses([{id: '0', firstname: 'Baka', lastname: 'Loca'}])
+                setNurses(nur)
+                //setNurses([{id: '0', firstname: 'Baka', lastname: 'Loca'}])
                     },[nur]);
 
         useEffect(() => {
@@ -328,11 +444,25 @@ export function EditableTeam (props) {
                 }
                     },[newclient]);
 
+                    useEffect(() => {
+                      //console.log('vypisujem editing key', editingKey)
+                      //props.rerender()
+                      if(editingKey!==''){
+                        const filtered = data.filter(item => item.key===editingKey)
+                        //console.log("editujem riadocek s key", editingKey, filtered[0], data)
+                      //   const filtered = data.filter(item => data.key===editingKey)
+                      setDatePickFrom(filtered[0].time_from)
+                      setDatePickTo(filtered[0].time_to)
+                      setPatientDate(filtered[0].pat_date)
+                      }
+                      //clients=clients
+                          },[editingKey]);
+
   const isEditing = (record) => record.key === editingKey;
 
   const edit = (record) => {
     form.setFieldsValue({
-      team: 'Tím '+record.key,
+      team: 'Team '+record.key,
       //members: record.members,
       ...record,
     });
@@ -365,10 +495,12 @@ export function EditableTeam (props) {
       console.log('vypisujem id clienta a nursky', row.client, row.nurse)
 
       if(key==='0'){
-        dispatch(addPatient({nurse: data[key].nurse_id, client: data[key].client_id, pat_from: row.pat_from, pat_to: row.pat_to}))
+        dispatch(addPatient({nurse: row.nurse, client: row.client, pat_range: patientRange, time_from: datePickFrom, time_to: datePickTo, shift: row.shift}))
       }
       else{
-      dispatch(editPatient({id: key, nurse: data[key].nurse_id, client: data[key].client_id, pat_from: row.pat_from, pat_to: row.pat_to}))
+      const filtered = data.filter(item => item.key===key)
+      //console.log("SAVEEEEEEEEEEEEE", key, filtered[0].nurse_id, filtered[0].client_id, patientDate, datePickFrom, datePickTo, row.shift)
+      dispatch(editPatient({id: key, nurse: filtered[0].nurse_id, client: filtered[0].client_id, pat_date: patientDate, time_from: datePickFrom, time_to: datePickTo, shift: row.shift}))
       }
       setDatePickFrom('')
       setDatePickTo('')
@@ -398,25 +530,53 @@ export function EditableTeam (props) {
     {
       title: 'Nurse',
       dataIndex: 'nurse',
-      width: '20%',
+      width: '10%',
       editable: true,
+      // render(text, record) {
+      //   return {
+      //     props: {
+      //       style: { background: '#bac2bc'}//parseInt(text) > 50 ? "red" : "green" }
+      //     },
+      //     children: <div>{text}</div>
+      //   };
+      // }
     },
     {
       title: 'Client',
       dataIndex: 'client',
-      width: '20%',
+      width: '10%',
+      editable: true,
+      // render(text, record) {
+      //   return {
+      //     props: {
+      //       style: { background: '#bac2bc'}//parseInt(text) > 50 ? "red" : "green" }
+      //     },
+      //     children: <div>{text}</div>
+      //   };
+      // }
+    },
+    {
+      title: 'Shift date',
+      dataIndex: 'pat_date',
+      width: '15%',
       editable: true,
     },
     {
-      title: 'From',
-      dataIndex: 'pat_from',
-      width: '25%',
+      title: 'Shift type',
+      dataIndex: 'shift',
+      width: '15%',
       editable: true,
     },
     {
-      title: 'To',
-      dataIndex: 'pat_to',
-      width: '25%',
+      title: 'Shift from',
+      dataIndex: 'time_from',
+      width: '15%',
+      editable: true,
+    },
+    {
+      title: 'Shift to',
+      dataIndex: 'time_to',
+      width: '15%',
       editable: true,
     },
     {
@@ -464,7 +624,10 @@ export function EditableTeam (props) {
         editing: isEditing(record),
         nurses: nurses,
         clients: clients,
-        setPatFrom: setPatFrom
+        setPatFrom: setPatFrom,
+        setPatTo: setPatTo,
+        setPatDate: setPatDate,
+        setPatRange: setPatRange
         //deleteteam: deleteteam,
         //manage: props.manage
       }),

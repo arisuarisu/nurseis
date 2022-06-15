@@ -10,6 +10,12 @@ Session.addAxiosInterceptors(axios);
 //   return res;
 //   })
 
+export const fetchTeamCount = createAsyncThunk('teams/teamcount', async () => {
+  const res = await axios.get("/teams/count").then(res => res.data)
+  console.log('TEAM COUNT THUNK')
+  return res;
+  })
+
 export const fetchNurses = createAsyncThunk('teams/getnurses', async () => {
   const res = await axios.get("/teams/nursenames").then(res => res.data)
   return res;
@@ -134,8 +140,10 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
               const res = await axios.post("/teams/patadd", {
                   id_nurse: patient.nurse,
                   id_client: patient.client,
-                  pat_from: patient.pat_from,
-                  pat_to: patient.pat_to
+                  pat_range: patient.pat_range,
+                  time_from: patient.time_from,
+                  time_to: patient.time_to,
+                  shift: patient.shift
                 //members: [...team.members],
                 //img: client.img
               }).then(res => res.data)
@@ -148,8 +156,10 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
                     id: patient.id,
                     id_nurse: patient.nurse,
                     id_client: patient.client,
-                    pat_from: patient.pat_from,
-                    pat_to: patient.pat_to
+                    pat_date: patient.pat_date,
+                  time_from: patient.time_from,
+                  time_to: patient.time_to,
+                  shift: patient.shift
                   //members: [...team.members],
                   //img: client.img
                 }).then(res => res.data)
@@ -175,7 +185,7 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
 
 const teamsSlice = createSlice({
   name: 'teams',
-  initialState: { nurses: [], clients: [], tmembers: [], members: [], patients: [], tpatients: [], calendar: [], loading: true },
+  initialState: { nurses: [], clients: [], tmembers: [], members: [], patients: [], tpatients: [], calendar: [], loading: true, teamcount: 0 },
   reducers: {
   },
   extraReducers: {
@@ -272,6 +282,16 @@ const teamsSlice = createSlice({
     [fetchCalendar.rejected]: (state, action) => {
         state.loading=false
     },
+    [fetchTeamCount.pending]: (state, action) => {
+      state.loading=true
+    },
+    [fetchTeamCount.fulfilled]: (state, action) => {
+      state.loading=false
+      state.teamcount=action.payload
+    },
+    [fetchTeamCount.rejected]: (state, action) => {
+        state.loading=false
+    },
   },
 })
 
@@ -283,5 +303,6 @@ export const selectTpatients = state => state.teams.tpatients;
 export const selectPatients = state => state.teams.patients;
 export const selectCalendar = state => state.teams.calendar;
 export const selectLoading = state => state.teams.loading;
+export const selectTeamCount = state => state.teams.teamcount;
 
 export default teamsSlice.reducer;

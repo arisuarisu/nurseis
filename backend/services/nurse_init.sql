@@ -129,8 +129,11 @@ CREATE TABLE patient ( --rozdelit address?? rodne cislo???
     id bigint DEFAULT nextval('patient_id_seq'::regclass) NOT NULL PRIMARY KEY,
     id_nurse bigint NOT NULL,
     id_client bigint NOT NULL,
-    pat_from timestamp DEFAULT CURRENT_TIMESTAMP::date NOT NULL,
-    pat_to timestamp,
+    time_from time DEFAULT CURRENT_TIMESTAMP::time NOT NULL,
+    time_to time DEFAULT CURRENT_TIMESTAMP::time NOT NULL,
+    pat_date date NOT NULL,
+    shift VARCHAR (1) DEFAULT 'd' NOT NULL,
+    check(shift in ('d', 'n')),
     CONSTRAINT fk_nurse_patient
       FOREIGN KEY(id_nurse) 
 	  REFERENCES employees(id)
@@ -141,11 +144,11 @@ CREATE TABLE patient ( --rozdelit address?? rodne cislo???
       ON DELETE CASCADE
 );
 
-insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (3, 1, '2022-03-03', '2022-04-25');
-insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (3, 1, '2022-03-03', '2022-04-02');
-insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (4, 2, '2022-04-03', '2022-05-25');
-insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (5, 3, '2022-03-03', '2022-03-25');
-insert into patient(id_nurse, id_client, pat_from, pat_to) VALUES (6, 4, '2022-04-03', '2022-05-25');
+insert into patient(id_nurse, id_client, pat_date, shift, time_from, time_to) VALUES (3, 1, '2022-03-03', 'd', '08:00:00.000000', '20:00:00');
+insert into patient(id_nurse, id_client, pat_date, shift, time_from, time_to) VALUES (3, 1, '2022-03-03', 'd', '08:00:00.000000', '20:00:00.000000');
+insert into patient(id_nurse, id_client, pat_date, shift, time_from, time_to) VALUES (4, 2, '2022-04-03', 'n', '08:00:00.000000', '20:00:00.000000');
+insert into patient(id_nurse, id_client, pat_date, shift, time_from, time_to) VALUES (5, 3, '2022-03-03', 'd', '08:00:00.000000', '20:00:00.000000');
+insert into patient(id_nurse, id_client, pat_date, shift, time_from, time_to) VALUES (6, 4, '2022-04-03', 'd', '08:00:00.000000', '20:00:00.000000');
 
 CREATE SEQUENCE diagnosis_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
 

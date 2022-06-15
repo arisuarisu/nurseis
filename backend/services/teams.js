@@ -22,6 +22,14 @@ const config = require('../config');
 //     return data
 //   }
 
+async function getTeamCount() {
+  const data = await db.query(
+    "SELECT COUNT(*) FROM teams", []
+    );
+    console.log('vypisujem teamcount', data[0].count)
+  return data[0].count
+}
+
 async function getNurses() {
   const data = await db.query(
     "SELECT id, firstname, lastname FROM employees WHERE role='nurse'", []
@@ -114,11 +122,25 @@ async function getClients() {
     //     data[i].patient_ids=[]
     //   }
     // }
-    const data = [{key: 1, nurse_id: 3, nurse: 'zuzana kovacova', client_id: 1, client: 'Rebeca Schwartz', pat_from: '2022-04-04', pat_to: '2022-04-27'},
-    {key: 2, nurse_id: 4, nurse: 'zuzana kovacova', client_id: 2, client: 'Olivia Wilde', pat_from: '2022-04-08', pat_to: '2022-04-10'},
-    {key: 3, nurse_id: 5, nurse: 'pavol majesky', client_id: 3, client: 'Oscar Bleu', pat_from: '2022-04-01', pat_to: '2022-04-28'},
-    {key: 4, nurse_id: 6, nurse: 'Veronika Kovacova', client_id: 4, client: 'Peter Kreutz', pat_from: '2022-04-04', pat_to: '2022-04-27'},
-  ]
+  //   const data = [{key: 1, nurse_id: 3, nurse: 'zuzana kovacova', client_id: 1, client: 'Rebeca Schwartz', pat_date: '2022-04-04', time_from: '8:00:00', time_to: '20:00:00', shift: 'd'},
+  //   {key: 2, nurse_id: 4, nurse: 'zuzana kovacova', client_id: 2, client: 'Olivia Wilde', pat_date: '2022-04-08', time_from: '8:00:00', time_to: '20:00:00', shift: 'd'},
+  //   {key: 3, nurse_id: 5, nurse: 'pavol majesky', client_id: 3, client: 'Oscar Bleu', pat_date: '2022-04-01', time_from: '8:00:00', time_to: '20:00:00', shift: 'd'},
+  //   {key: 4, nurse_id: 6, nurse: 'Veronika Kovacova', client_id: 4, client: 'Peter Kreutz', pat_date: '2022-04-04', time_from: '8:00:00', time_to: '20:00:00', shift: 'd'},
+  // ]
+  let data = []
+
+  if(id_team==='0'){
+    data = await db.query(
+      "SELECT t.id,  ROW_NUMBER () OVER (ORDER BY t.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2", [month, year]
+      //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
+      );
+  }else{
+
+  data = await db.query(
+    "SELECT t.id,  ROW_NUMBER () OVER (ORDER BY t.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2 AND t.id=$3", [month, year, BigInt(id_team)]
+    //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
+    );
+  }
 
   // const data=[
   //   {key: 1, nurse_id: 3, client_id: }
@@ -133,10 +155,10 @@ async function getClients() {
     //const data = await db.query(
     //  "SELECT t.id AS key, p.pat_from, p.pat_to, c.firstname, c.lastname from teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id ORDER BY t.id", []
     //);
-    const data = [{key: 1, nurse: 'zuzana kovacova', client: 'Rebeca Schwartz', pat_from: '2022-04-04', pat_to: '2022-04-27'},
-    {key: 2, nurse: 'zuzana kovacova', client: 'Olivia Wilde', pat_from: '2022-04-08', pat_to: '2022-04-10'},
-    {key: 3, nurse: 'pavol majesky', client: 'Oscar Bleu', pat_from: '2022-04-01', pat_to: '2022-04-28'},
-    {key: 4, nurse: 'Veronika Kovacova', client: 'Peter Kreutz', pat_from: '2022-04-04', pat_to: '2022-04-27'},
+    const data = [{key: 1, nurse: 'zuzana kovacova', client: 'Rebeca Schwartz', pat_date: '2022-04-04', time_from: '08:00:00', time_to: '20:00:00', shift: 'd'},
+    {key: 2, nurse: 'zuzana kovacova', client: 'Olivia Wilde', pat_date: '2022-04-04', time_from: '08:00:00', time_to: '20:00:00', shift: 'd'},
+    {key: 3, nurse: 'pavol majesky', client: 'Oscar Bleu', pat_date: '2022-04-04', time_from: '08:00:00', time_to: '20:00:00', shift: 'd'},
+    {key: 4, nurse: 'Veronika Kovacova', client: 'Peter Kreutz', pat_date: '2022-04-04', time_from: '08:00:00', time_to: '20:00:00', shift: 'd'},
   ]
     return data;
   }
@@ -170,7 +192,12 @@ async function getClients() {
       {title: 'Kovac: Rudolf Bielik', start: '2022-05-04', end: '2022-05-08', color: '#BF00FF'},
       {title: 'Kreuz: Renata Horvathova', start: '2022-05-08', end: '2022-05-20', color: '#3D2B1F'},
     ]
-    return events;
+    //return events;
+
+    const fakedata = [
+      {team: '1', nurse: 'Lucia Novotna', '1': 'VR', '2': 'CD', '3': 'AB'}
+    ]
+     return fakedata;
   }
 
   async function getMembersOfTeam(id_team, year, month) {
@@ -232,31 +259,48 @@ async function getClients() {
     return false
   }
 
-  async function addPatient(id_nurse, id_client, pat_from, pat_to){ //if
+  async function addPatient(id_nurse, id_client, pat_range, time_from, time_to, shift){ //if
     // const timecheck = await db.query(
     //   "SELECT * FROM patient WHERE '[$1, $2]'::daterange @> emp_from AND '[$1, $2]'::daterange @> emp_to", [id_team, id_emp, mem_from, mem_to]
     // );
        let data=null
+       let pat_date=''
+       const pat_range_from= new Date(pat_range[0])
+       const pat_range_to= new Date(pat_range[1])
+       console.log('vypisujem ADD PATIENT RANGE', pat_range[0], pat_range[1], pat_range_from, pat_range_to)
     // if(timecheck===[]){
-    if(await patient_timecheck(id_client, pat_from, pat_to)){
-    data = await db.query(
-      'INSERT INTO patient(id_nurse, id_client, pat_from, pat_to) VALUES($1, $2, $3, $4) RETURNING id', [id_nurse, id_client, pat_from, pat_to]
-    );
-    }
+    //if(await patient_timecheck(id_client, pat_from, pat_to)){
+      let compared_date=pat_range_from
+      while(compared_date<=pat_range_to){
+
+        //console.log(compared_date.toISOString().substring(0, 10))
+
+        await db.query(
+            'INSERT INTO patient(id_nurse, id_client, pat_date, time_from, time_to, shift) VALUES($1, $2, $3, $4, $5, $6) RETURNING id', [BigInt(id_nurse), BigInt(id_client), compared_date.toISOString().substring(0, 10), time_from, time_to, shift]
+          );
+
+        let newDate = compared_date.setDate(compared_date.getDate() + 1);
+        compared_date= new Date(newDate);
+      }
+    // data = await db.query(
+    //   'INSERT INTO patient(id_nurse, id_client, pat_date, time_from, time_to, shift) VALUES($1, $2, $3, $4, $5, $6) RETURNING id', [id_nurse, id_client, pat_date, time_from, time_to, shift]
+    // );
+    //}
+    data = {message: 'blabla'} //ON CONFLICT??
     return data
   }
   
-  async function editPatient(id, id_nurse, id_client, pat_from, pat_to){ //if
+  async function editPatient(id, id_nurse, id_client, pat_date, time_from, time_to, shift){ //if
     // const timecheck = await db.query(
     //   "SELECT * FROM patient WHERE '[$1, $2]'::daterange @> emp_from AND '[$1, $2]'::daterange @> emp_to", [id_team, id_emp, mem_from, mem_to]
     // );
        let data=null
     // if(timecheck===[]){
-    if(await patient_timecheck(id_client, pat_from, pat_to)){
+    //if(await patient_timecheck(id_client, pat_from, pat_to)){
       data = await db.query(
-        'UPDATE patient SET id_nurse=$1, id_client=$2, pat_from=$3, pat_to=$4 VALUES($1, $2, $3, $4) WHERE id=$5', [id_nurse, id_client, pat_from, pat_to, BigInt(id)]
+        'UPDATE patient SET id_nurse=$1, id_client=$2, pat_date=$3, time_from=$4, time_to=$5, shift=$6 WHERE id=$7', [BigInt(id_nurse), BigInt(id_client), pat_date, time_from, time_to, shift, BigInt(id)] //VALUES($1, $2, $3, $4, $5, $6)
       );
-      }
+      //}
       return data
   }
 
@@ -333,6 +377,7 @@ async function getClients() {
 
   module.exports = {
     //getTeams,
+    getTeamCount,
     getNurses,
     getClients,
     getTeamMembers,
