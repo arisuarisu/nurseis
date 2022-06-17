@@ -131,13 +131,13 @@ async function getClients() {
 
   if(id_team==='0'){
     data = await db.query(
-      "SELECT t.id,  ROW_NUMBER () OVER (ORDER BY t.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2", [month, year]
+      "SELECT p.id, ROW_NUMBER () OVER (ORDER BY p.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2", [month, year]
       //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
       );
   }else{
 
   data = await db.query(
-    "SELECT t.id,  ROW_NUMBER () OVER (ORDER BY t.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2 AND t.id=$3", [month, year, BigInt(id_team)]
+    "SELECT p.id, ROW_NUMBER () OVER (ORDER BY p.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2 AND t.id=$3", [month, year, BigInt(id_team)]
     //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
     );
   }

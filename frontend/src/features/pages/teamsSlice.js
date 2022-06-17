@@ -147,7 +147,7 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
                 //members: [...team.members],
                 //img: client.img
               }).then(res => res.data)
-              //dispatch(fetchTeams())
+              dispatch(fetchTeamPatients({id_team: patient.id_team, year: patient.year, month: patient.month}))
               return res;
               })
     
@@ -163,7 +163,7 @@ export const fetchTeamMembers = createAsyncThunk('teams/tmem', async (members) =
                   //members: [...team.members],
                   //img: client.img
                 }).then(res => res.data)
-                //dispatch(fetchTeams())
+                dispatch(fetchTeamPatients({id_team: patient.id_team, year: patient.year, month: patient.month}))
                 return res;
                 })
 

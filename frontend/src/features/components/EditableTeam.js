@@ -266,6 +266,7 @@ export function EditableTeam (props) {
     const dispatch = useDispatch();
     const todaydate = new Date();
     const today = [todaydate.getFullYear(), todaydate.getMonth()+1]
+    console.log('TYPEOF GETFULLYEARRRRRRR', typeof(todaydate.getFullYear()))
   const [form] = Form.useForm();
   const datadata = useSelector(selectTpatients);
   console.log('vypisujem timy', datadata)
@@ -361,18 +362,17 @@ export function EditableTeam (props) {
   }
 
   const title = () => {
-    console.log("VYPISUJEM TITLE TCOUNT", tcount, typeof(tcount))
     let optionlist = []
     for(let j=0;j<=tcount;j++){
       optionlist.push(j)
-      console.log("VYPISUJEM PORADIE TIMOV")
     }
+    //console.log("VYPISUJEM TITLE CAS", selectedDate[0], selectedDate[1], typeof(selectedDate[0]))
     return(
       <Row justify="space-between" align="middle">
         {/* <Col>Team {selectedTeam}</Col> */}
         <Col>
-          <Select defaultValue="All teams" style={{ width: 120 }} onChange={chooseTeam}>
-            {/* {optionlist} */}
+        <Select defaultValue="All teams" style={{ width: 120 }} onChange={chooseTeam} disabled={editingKey===''?false:true}>
+          {/* {optionlist} */}
             {optionlist.map(option => {
               if(option===0){
                 return(
@@ -386,7 +386,7 @@ export function EditableTeam (props) {
           </Select>
       </Col>
         <Col>
-        <DatePicker onChange={onDateSelect} picker="month" />
+        <DatePicker onChange={onDateSelect} defaultValue={moment(selectedDate[0].toString()+selectedDate[1].toString(), 'YYYY-MM')} format={'YYYY-MM'} picker="month"  disabled={editingKey===''?false:true}/>
             <Button type="primary" onClick={addnew} disabled={newclient} >Add shift</Button> 
         </Col>
       </Row>
@@ -495,12 +495,12 @@ export function EditableTeam (props) {
       console.log('vypisujem id clienta a nursky', row.client, row.nurse)
 
       if(key==='0'){
-        dispatch(addPatient({nurse: row.nurse, client: row.client, pat_range: patientRange, time_from: datePickFrom, time_to: datePickTo, shift: row.shift}))
+        dispatch(addPatient({nurse: row.nurse, client: row.client, pat_range: patientRange, time_from: datePickFrom, time_to: datePickTo, shift: row.shift, id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}))
       }
       else{
       const filtered = data.filter(item => item.key===key)
       //console.log("SAVEEEEEEEEEEEEE", key, filtered[0].nurse_id, filtered[0].client_id, patientDate, datePickFrom, datePickTo, row.shift)
-      dispatch(editPatient({id: key, nurse: filtered[0].nurse_id, client: filtered[0].client_id, pat_date: patientDate, time_from: datePickFrom, time_to: datePickTo, shift: row.shift}))
+      dispatch(editPatient({id: filtered[0].id, nurse: filtered[0].nurse_id, client: filtered[0].client_id, pat_date: patientDate, time_from: datePickFrom, time_to: datePickTo, shift: row.shift, id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}))
       }
       setDatePickFrom('')
       setDatePickTo('')
