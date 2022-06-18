@@ -165,39 +165,61 @@ async function getClients() {
 
   async function getTeamCalendar(id_team, year, month) {
     //console.log('vypisujem yearmonth', year, month)
-    const data = await db.query(
-      "select ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.firstname as n_first, e.lastname as n_last, c.firstname as c_first, c.lastname as c_last, EXTRACT(MONTH FROM p.pat_from) as month_from, EXTRACT(DAY FROM p.pat_from) as day_from, EXTRACT(MONTH FROM p.pat_to) as month_to, EXTRACT(DAY FROM p.pat_to) as day_to from teams t left join member m on t.id=m.id_team left join employees e on m.id_employee=e.id left join patient p on e.id=p.id_nurse left join clients c on p.id_client=c.id WHERE e.role='nurse' AND t.id=$1 AND (($2>= EXTRACT(YEAR FROM pat_from) AND $3>= EXTRACT(MONTH FROM pat_from)) AND (($4<= EXTRACT(YEAR FROM pat_to) AND $5<= EXTRACT(MONTH FROM pat_to)) OR pat_to=NULL))", [BigInt(id_team), year, month, year, month]
+    // const data = await db.query(
+    //   "select ROW_NUMBER () OVER (ORDER BY t.id) AS key, e.firstname as n_first, e.lastname as n_last, c.firstname as c_first, c.lastname as c_last, EXTRACT(MONTH FROM p.pat_from) as month_from, EXTRACT(DAY FROM p.pat_from) as day_from, EXTRACT(MONTH FROM p.pat_to) as month_to, EXTRACT(DAY FROM p.pat_to) as day_to from teams t left join member m on t.id=m.id_team left join employees e on m.id_employee=e.id left join patient p on e.id=p.id_nurse left join clients c on p.id_client=c.id WHERE e.role='nurse' AND t.id=$1 AND (($2>= EXTRACT(YEAR FROM pat_from) AND $3>= EXTRACT(MONTH FROM pat_from)) AND (($4<= EXTRACT(YEAR FROM pat_to) AND $5<= EXTRACT(MONTH FROM pat_to)) OR pat_to=NULL))", [BigInt(id_team), year, month, year, month]
+    // );
+    // //let newdata=[]
+    // console.log('vypisujem data z calendara v services pred prerobenim', data)
+    // for(let i;i<data.length;i++){
+    //   if(data[i].month_from<month){
+    //     data[i].day_from=1
+    //     data[i].month_from=month
+    //   }
+    //   if(data[i].month_to>month){
+    //     //najst posledny den v danom mesiaci
+
+    //     data[i].day_to=new Date(year, month, 0).getDate(); //returns last day in month
+    //     data[i].month_to=month
+    //   }
+    // }
+    // console.log('vypisujem data z calendara v services po prerobeni', data)
+
+    // const events = [
+    //   {title: 'Majesky: Anton Schwartz', start: '2022-05-05', end: '2022-05-27', color: '#47abcc'},
+    //   {title: 'Milatova: Rebeca Schwartz', start: '2022-05-02', end: '2022-05-24', color: '#F2BDCD'},
+    //   {title: 'Zelena: Antonia Bleu', start: '2022-05-05', end: '2022-05-07', color: '#682860'},
+    //   {title: 'Majesky: Anton Schwartz', start: '2022-05-29', end: '2022-06-27', color: '#00755E'},
+    //   {title: 'Kovac: Rudolf Bielik', start: '2022-05-04', end: '2022-05-08', color: '#BF00FF'},
+    //   {title: 'Kreuz: Renata Horvathova', start: '2022-05-08', end: '2022-05-20', color: '#3D2B1F'},
+    // ]
+    // //return events;
+
+    // const fakedata = [
+    //   {team: '1', nurse: 'Lucia Novotna', '1': 'VR', '2': 'CD', '3': 'AB'}
+    // ]
+    //  return fakedata;
+
+    let data = []
+
+  if(id_team==='0'){
+    data = await db.query(
+      "SELECT p.id, ROW_NUMBER () OVER (ORDER BY p.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2", [month, year]
+      //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
+      );
+  }else{
+
+  data = await db.query(
+    "SELECT p.id, ROW_NUMBER () OVER (ORDER BY p.id) AS key, p.id_nurse as nurse_id, concat(e.firstname, ' ', e.lastname) nurse, p.id_client as client_id, concat(c.firstname, ' ', c.lastname) client, p.time_from, p.time_to, TO_CHAR(p.pat_date, 'yyyy-mm-dd') pat_date, p.shift FROM teams t INNER JOIN member m ON t.id=m.id_team RIGHT JOIN employees e ON m.id_employee=e.id INNER JOIN patient p ON e.id=p.id_nurse INNER JOIN clients c ON p.id_client=c.id WHERE EXTRACT(MONTH FROM p.pat_date)=$1 AND EXTRACT(YEAR FROM p.pat_date)=$2 AND t.id=$3", [month, year, BigInt(id_team)]
+    //"SELECT t.id as key, STRING_AGG (c.firstname || ' ' ||c.lastname, ',') patients, STRING_AGG (p.id::varchar(255), ',') patient_ids FROM teams t LEFT JOIN patient p ON t.id=p.id_team LEFT JOIN clients c ON p.id_client=c.id GROUP BY t.id", []
     );
-    //let newdata=[]
-    console.log('vypisujem data z calendara v services pred prerobenim', data)
-    for(let i;i<data.length;i++){
-      if(data[i].month_from<month){
-        data[i].day_from=1
-        data[i].month_from=month
-      }
-      if(data[i].month_to>month){
-        //najst posledny den v danom mesiaci
+  }
 
-        data[i].day_to=new Date(year, month, 0).getDate(); //returns last day in month
-        data[i].month_to=month
-      }
-    }
-    console.log('vypisujem data z calendara v services po prerobeni', data)
+  // const data=[
+  //   {key: 1, nurse_id: 3, client_id: }
 
-    const events = [
-      {title: 'Majesky: Anton Schwartz', start: '2022-05-05', end: '2022-05-27', color: '#47abcc'},
-      {title: 'Milatova: Rebeca Schwartz', start: '2022-05-02', end: '2022-05-24', color: '#F2BDCD'},
-      {title: 'Zelena: Antonia Bleu', start: '2022-05-05', end: '2022-05-07', color: '#682860'},
-      {title: 'Majesky: Anton Schwartz', start: '2022-05-29', end: '2022-06-27', color: '#00755E'},
-      {title: 'Kovac: Rudolf Bielik', start: '2022-05-04', end: '2022-05-08', color: '#BF00FF'},
-      {title: 'Kreuz: Renata Horvathova', start: '2022-05-08', end: '2022-05-20', color: '#3D2B1F'},
-    ]
-    //return events;
-
-    const fakedata = [
-      {team: '1', nurse: 'Lucia Novotna', '1': 'VR', '2': 'CD', '3': 'AB'}
-    ]
-     return fakedata;
+  // ]
+    console.log('vypisujem calendar data', data)
+    return data
   }
 
   async function getMembersOfTeam(id_team, year, month) {

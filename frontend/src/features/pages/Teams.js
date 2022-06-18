@@ -18,11 +18,12 @@ import {
   deleteTeam
 } from '../pages/teamsSlice';
 import { Card, Row, Col, Typography, Popconfirm, Calendar, Tag, Select, DatePicker} from 'antd';
-import { Layout, Table, Breadcrumb, Button } from 'antd';
+import { Layout, Table, Breadcrumb, Button, Popover } from 'antd';
 import moment from 'moment';
 const { Content, Header, Footer } = Layout;
 const { Title } = Typography;
 const { Option } = Select;
+
 //const firstrow = [{key:'0', firstname:'asd', lastname:'asd', address:'CERVENA', editable: true}]
 // const datadata = [{key:'0', firstname:'Hana', lastname:'Zelena', address:'Lesna', team: 'KOVACOVA'},
 // {key:'1', firstname:'Jan', lastname:'Biely', address:'Topolcany', team: 'HORVATOVA'},
@@ -36,33 +37,47 @@ const { Option } = Select;
 
 export function Teams() {
   const dispatch = useDispatch();
+  const todaydate = new Date();
+  const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const today = [todaydate.getFullYear(), todaydate.getMonth()+1, todaydate.getDate()]
+  const monthFormat = 'YYYY-MM'
   //const [disabledadd, setDisabledadd] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState('3');
-  const [selectedYear, setSelectedYear] = useState('2022');
-  const [selectedMonth, setSelectedMonth] = useState('4');
+  const [selectedTeam, setSelectedTeam] = useState('1');
+  // const [selectedYear, setSelectedYear] = useState('2022');
+  // const [selectedMonth, setSelectedMonth] = useState('4');
+  const [selectedDate, setSelectedDate] = useState(today);
   const calendata = useSelector(selectCalendar);
-  console.log('vypisujem calendata z databazky', calendata)
-  console.log('vypisujem calendata length', calendata.length)
-  let data=[]
-  let key=0
-  for(let i=0;i<calendata.length;i++){
-    console.log('CACACA')
-    for(let j=calendata[i].day_from;j<=calendata[i].day_to;j++){
-      data.push({key: key, nurse: calendata[i].n_first+' '+calendata[i].n_last, client: calendata[i].c_first+' '+calendata[i].c_last, day: j})
+  // console.log('vypisujem calendata z databazky', calendata)
+  // console.log('vypisujem calendata length', calendata.length)
+  const [data, setData] = useState([]);
+  // let data=[]
+  // let key=0
+  // for(let i=0;i<calendata.length;i++){
+  //   //console.log('CACACA')
+  //   for(let j=calendata[i].day_from;j<=calendata[i].day_to;j++){
+  //     data.push({key: key, nurse: calendata[i].n_first+' '+calendata[i].n_last, client: calendata[i].c_first+' '+calendata[i].c_last, day: j})
       
-      console.log('vypisujem data-i po prerobeni v calendata', data[key])
-      key++
-    }
-  }
-  console.log('vypisujem data z calendara', data)
+  //     console.log('vypisujem data-i po prerobeni v calendata', data[key])
+  //     key++
+  //   }
+  // }
+  //console.log('vypisujem data z calendara', data)
+
+  useEffect(() => {
+    setData(calendata)
+        },[calendata]);
 
   const onDateSelect = (date)=>{
     console.log('selecting date', date)
   }
 
+  const setToday = (date)=>{
+    setSelectedDate(today)
+  }
+
   const calendartitle = () => {
     return(
-      <Row justify="space-between" align="middle">
+      <Row justify="space-between" align="middle" style={{width: '100%'}}>
         <Col>
         
         {/* <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
@@ -73,15 +88,18 @@ export function Teams() {
       </Option>
       <Option value="Yiminghe">yiminghe</Option>
     </Select> */}
-    <Select defaultValue="All teams" style={{ width: 120, zIndex: 2 }} onChange={handleChange} >
-                        <Option value="allteams">All teams</Option>
+    <Select defaultValue="Select a team" style={{ width: 120, zIndex: 2 }} onChange={handleChange} >
+                        {/* <Option value="allteams">All teams</Option> */}
                         {teams.map((team, index) => (<Option value={index}>{team.name}</Option>))}
                         
                     </Select>
         </Col>
-
         <Col>
-        <DatePicker onChange={onDateSelect} picker="month" />
+        {months[selectedDate[1]]+' '+selectedDate[0].toString()}
+        </Col>
+        <Col>
+        <Button type="primary" onClick={setToday}>Today</Button>
+        <DatePicker onChange={onDateSelect} picker="month" defaultValue={moment(selectedDate[0].toString()+selectedDate[1].toString(), monthFormat)} />
         </Col>
       </Row>
     )
@@ -104,10 +122,10 @@ export function Teams() {
                 ]
 
   function getListData(value) {
-      let listData = data.filter(item => item.day===value.date());
-      console.log('vypisujem listdata z calen funkcie', listData)
-      console.log('vypisujem value.date', value.date())
-      console.log('vypisujem value', value.format('YYYY-MM-DD'))
+      let listData = data.filter(item => item.pat_date===value.format('YYYY-MM-DD'));
+      // console.log('vypisujem listdata z calen funkcie', listData)
+      // console.log('vypisujem value.date', value.date())
+      // console.log('vypisujem value', value.format('YYYY-MM-DD'))
       // switch (value.date()) {
       //   case 15:
       //     listData = data.filter(item => item.day=='15'); break;
@@ -130,14 +148,17 @@ export function Teams() {
     
     function dateCellRender(value) {
       const listData = getListData(value);
+      console.log('vypisujem value', value)
       console.log('vypisujem listdata z datecell renderu', listData)
       return (
         <ul className="events" style={{position: 'relative', right: 30}}>
           {
             listData.map(item => (
+              <Popover content={()=> 'Hello!'} title={item.nurse} trigger="hover">
               <li key={item.key} style={{listStyle: 'none'}}>
                 <Tag color='green'>{item.nurse}</Tag><Tag color='blue'>{item.client}</Tag>
               </li>
+              </Popover>
             ))
           }
         </ul>
@@ -149,13 +170,13 @@ export function Teams() {
       }
 
   useEffect(() => {
-          dispatch(fetchCalendar({id_team: selectedTeam, year: selectedYear, month: selectedMonth}));
+          dispatch(fetchCalendar({id_team: selectedTeam, year: selectedDate[0], month: selectedDate[1]}));
         },[dispatch]);
 
-        useEffect(() => {
-          //dispatch(fetchCalendar());
-          console.log('vypisujem zmenu calendata')
-        },[calendata]);
+        // useEffect(() => {
+        //   //dispatch(fetchCalendar());
+        //   console.log('vypisujem zmenu calendata')
+        // },[calendata]);
 
   return (
     <>
@@ -176,6 +197,7 @@ export function Teams() {
                 <Card style={{width: '100%'}}>
                     
                     {/* <Calendar dateCellRender={dateCellRender} mode='month' defaultValue={moment('2022-04-25')} headerRender={calendartitle} style={{position: 'relative', bottom: 44,  zIndex: 1}}/> */}
+                    <Calendar defaultValue={moment(selectedDate[0].toString()+'-'+selectedDate[1].toString()+'-'+selectedDate[2].toString(), 'YYYY-MM-DD')} dateCellRender={dateCellRender} headerRender={calendartitle} mode='month'/>
                     {/* style={{listStyle: 'none'}} */}
                     {/* <Organizer style={{width: '100%'}}/> */}
                     <Organizer2 style={{width: '100%'}}/>

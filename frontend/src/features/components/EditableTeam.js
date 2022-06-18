@@ -266,10 +266,10 @@ export function EditableTeam (props) {
     const dispatch = useDispatch();
     const todaydate = new Date();
     const today = [todaydate.getFullYear(), todaydate.getMonth()+1]
-    console.log('TYPEOF GETFULLYEARRRRRRR', typeof(todaydate.getFullYear()))
+    //console.log('TYPEOF GETFULLYEARRRRRRR', typeof(todaydate.getFullYear()))
   const [form] = Form.useForm();
   const datadata = useSelector(selectTpatients);
-  console.log('vypisujem timy', datadata)
+  //console.log('vypisujem timy', datadata)
   const [data, setData] = useState([]);
   //console.log('vypisujem data ako primarny stav po rerendernuti blabla', data)
   const [dataCSV, setDataCSV] = useState([])
